@@ -70,7 +70,7 @@ function CustomerForm({ customer, onClose, onSaved }) {
         <Label>Address</Label>
         <Input placeholder="Street, City" {...register('address')} />
       </div>
-      <div className="flex justify-end gap-3 pt-2 border-t border-slate-100">
+      <div className="flex justify-end gap-3 pt-2 border-t border-slate-100 dark:border-slate-800">
         <Button type="button" variant="secondary" onClick={onClose}>Cancel</Button>
         <Button type="submit" disabled={isSubmitting}>
           {customer ? 'Save Changes' : 'Add Customer'}
@@ -109,8 +109,8 @@ export default function Customers() {
     <div>
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-slate-900">Customers</h1>
-          <p className="text-sm text-slate-500 mt-0.5">{total} total</p>
+          <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">Customers</h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">{total} total</p>
         </div>
         <Button onClick={() => { setEditCustomer(null); setFormOpen(true); }}>
           <Plus className="h-4 w-4" /> Add Customer
@@ -124,12 +124,12 @@ export default function Customers() {
         </div>
       </div>
 
-      <div className="rounded-lg border border-slate-200 bg-white shadow-sm overflow-hidden">
+      <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm overflow-hidden">
         <table className="w-full text-sm">
-          <thead className="border-b border-slate-200 bg-slate-50">
+          <thead className="border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50">
             <tr>
               {['Name', 'Phone', 'CNIC', 'Purchases', 'Total Spent', 'Added', ''].map((h) => (
-                <th key={h} className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">{h}</th>
+                <th key={h} className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">{h}</th>
               ))}
             </tr>
           </thead>
@@ -137,20 +137,20 @@ export default function Customers() {
             {loading && <tr><td colSpan={7} className="py-12 text-center text-slate-400">Loading…</td></tr>}
             {!loading && customers.length === 0 && (
               <tr><td colSpan={7} className="py-12 text-center">
-                <Users className="mx-auto h-10 w-10 text-slate-300 mb-3" />
-                <p className="text-slate-500 font-medium">No customers yet</p>
+                <Users className="mx-auto h-10 w-10 text-slate-300 dark:text-slate-600 mb-3" />
+                <p className="text-slate-500 dark:text-slate-400 font-medium">No customers yet</p>
               </td></tr>
             )}
             {!loading && customers.map((c) => (
-              <tr key={c._id} className="border-t border-slate-100 hover:bg-slate-50 cursor-pointer" onClick={() => setDetailCustomer(c)}>
-                <td className="px-4 py-3 font-medium text-slate-900">{c.name}</td>
-                <td className="px-4 py-3 text-slate-600">{c.phone}</td>
-                <td className="px-4 py-3 text-slate-500 font-mono text-xs">{c.cnic || '—'}</td>
-                <td className="px-4 py-3">{c.totalPurchases}</td>
-                <td className="px-4 py-3 font-medium">{currency(c.totalSpent)}</td>
-                <td className="px-4 py-3 text-slate-400 text-xs">{date(c.createdAt)}</td>
+              <tr key={c._id} className="border-t border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer" onClick={() => setDetailCustomer(c)}>
+                <td className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100">{c.name}</td>
+                <td className="px-4 py-3 text-slate-600 dark:text-slate-300">{c.phone}</td>
+                <td className="px-4 py-3 text-slate-500 dark:text-slate-400 font-mono text-xs">{c.cnic || '—'}</td>
+                <td className="px-4 py-3 text-slate-700 dark:text-slate-300">{c.totalPurchases}</td>
+                <td className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100">{currency(c.totalSpent)}</td>
+                <td className="px-4 py-3 text-slate-400 dark:text-slate-500 text-xs">{date(c.createdAt)}</td>
                 <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
-                  <button onClick={() => { setEditCustomer(c); setFormOpen(true); }} className="rounded p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600">
+                  <button onClick={() => { setEditCustomer(c); setFormOpen(true); }} className="rounded p-1.5 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-600 dark:hover:text-slate-200">
                     <Pencil className="h-4 w-4" />
                   </button>
                 </td>
@@ -159,8 +159,8 @@ export default function Customers() {
           </tbody>
         </table>
         {total > 25 && (
-          <div className="flex items-center justify-between border-t border-slate-200 px-4 py-3">
-            <p className="text-xs text-slate-500">Page {page} of {totalPages}</p>
+          <div className="flex items-center justify-between border-t border-slate-200 dark:border-slate-800 px-4 py-3">
+            <p className="text-xs text-slate-500 dark:text-slate-400">Page {page} of {totalPages}</p>
             <div className="flex gap-1">
               <Button variant="secondary" size="sm" disabled={page === 1} onClick={() => setPage((p) => p - 1)}><ChevronLeft className="h-4 w-4" /></Button>
               <Button variant="secondary" size="sm" disabled={page === totalPages} onClick={() => setPage((p) => p + 1)}><ChevronRight className="h-4 w-4" /></Button>
@@ -203,22 +203,22 @@ function CustomerDetail({ customer, onClose }) {
         ) : (
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-3 text-sm">
-              <div><span className="text-slate-400">Phone</span><p className="font-medium">{detail.phone}</p></div>
-              <div><span className="text-slate-400">CNIC</span><p className="font-medium">{detail.cnic || '—'}</p></div>
-              <div><span className="text-slate-400">Email</span><p className="font-medium">{detail.email || '—'}</p></div>
-              <div><span className="text-slate-400">Address</span><p className="font-medium">{detail.address || '—'}</p></div>
-              <div><span className="text-slate-400">Purchases</span><p className="font-medium">{detail.totalPurchases}</p></div>
-              <div><span className="text-slate-400">Total Spent</span><p className="font-medium">{currency(detail.totalSpent)}</p></div>
+              <div><span className="text-slate-400 dark:text-slate-500">Phone</span><p className="font-medium text-slate-900 dark:text-slate-100">{detail.phone}</p></div>
+              <div><span className="text-slate-400 dark:text-slate-500">CNIC</span><p className="font-medium text-slate-900 dark:text-slate-100">{detail.cnic || '—'}</p></div>
+              <div><span className="text-slate-400 dark:text-slate-500">Email</span><p className="font-medium text-slate-900 dark:text-slate-100">{detail.email || '—'}</p></div>
+              <div><span className="text-slate-400 dark:text-slate-500">Address</span><p className="font-medium text-slate-900 dark:text-slate-100">{detail.address || '—'}</p></div>
+              <div><span className="text-slate-400 dark:text-slate-500">Purchases</span><p className="font-medium text-slate-900 dark:text-slate-100">{detail.totalPurchases}</p></div>
+              <div><span className="text-slate-400 dark:text-slate-500">Total Spent</span><p className="font-medium text-slate-900 dark:text-slate-100">{currency(detail.totalSpent)}</p></div>
             </div>
             {detail.sales?.length > 0 && (
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Purchase History</p>
-                <div className="rounded-lg border border-slate-200 divide-y divide-slate-100 max-h-48 overflow-y-auto">
+                <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">Purchase History</p>
+                <div className="rounded-lg border border-slate-200 dark:border-slate-700 divide-y divide-slate-100 dark:divide-slate-700 max-h-48 overflow-y-auto">
                   {detail.sales.map((s) => (
                     <div key={s._id} className="flex items-center justify-between px-3 py-2 text-sm">
-                      <span className="font-mono text-xs text-indigo-600">{s.invoiceNumber}</span>
-                      <span className="text-slate-400 text-xs">{date(s.saleDate)}</span>
-                      <span className="font-medium">{currency(s.grandTotal)}</span>
+                      <span className="font-mono text-xs text-indigo-600 dark:text-indigo-400">{s.invoiceNumber}</span>
+                      <span className="text-slate-400 dark:text-slate-500 text-xs">{date(s.saleDate)}</span>
+                      <span className="font-medium text-slate-900 dark:text-slate-100">{currency(s.grandTotal)}</span>
                     </div>
                   ))}
                 </div>

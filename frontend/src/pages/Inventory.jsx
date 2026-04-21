@@ -48,8 +48,6 @@ export default function Inventory() {
   const [qtyLoading, setQtyLoading] = useState({});
   const handleQty = async (laptop, delta) => {
     setQtyLoading((p) => ({ ...p, [laptop._id]: true }));
-    // optimistic
-    const origData = [...data];
     try {
       await api.patch(`/laptops/${laptop._id}/quantity`, { delta });
       refetch();
@@ -79,8 +77,8 @@ export default function Inventory() {
       {/* Header */}
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-slate-900">Inventory</h1>
-          <p className="text-sm text-slate-500 mt-0.5">{total} laptop{total !== 1 ? 's' : ''} in stock</p>
+          <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">Inventory</h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">{total} laptop{total !== 1 ? 's' : ''} in stock</p>
         </div>
         <div className="flex gap-2">
           <Button variant="secondary" onClick={refetch} title="Refresh">
@@ -121,12 +119,12 @@ export default function Inventory() {
       </div>
 
       {/* Table */}
-      <div className="rounded-lg border border-slate-200 bg-white overflow-hidden shadow-sm">
+      <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden shadow-sm">
         <table className="w-full text-sm">
-          <thead className="border-b border-slate-200 bg-slate-50">
+          <thead className="border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50">
             <tr>
               {['SKU', 'Brand / Model', 'Condition', 'Specs', 'Qty', user?.role === 'admin' ? 'Cost / Sell' : 'Price', 'Status', 'Actions'].map((h) => (
-                <th key={h} className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">{h}</th>
+                <th key={h} className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">{h}</th>
               ))}
             </tr>
           </thead>
@@ -137,29 +135,29 @@ export default function Inventory() {
             {!loading && data.length === 0 && (
               <tr>
                 <td colSpan={8} className="py-16 text-center">
-                  <Package className="mx-auto h-10 w-10 text-slate-300 mb-3" />
-                  <p className="text-slate-500 font-medium">No laptops found</p>
-                  <p className="text-slate-400 text-xs mt-1">Add a laptop or adjust your filters</p>
+                  <Package className="mx-auto h-10 w-10 text-slate-300 dark:text-slate-600 mb-3" />
+                  <p className="text-slate-500 dark:text-slate-400 font-medium">No laptops found</p>
+                  <p className="text-slate-400 dark:text-slate-500 text-xs mt-1">Add a laptop or adjust your filters</p>
                 </td>
               </tr>
             )}
             {!loading && data.map((laptop) => (
               <tr
                 key={laptop._id}
-                className={`border-t border-slate-100 hover:bg-slate-50 transition-colors cursor-pointer ${isLowStock(laptop) ? 'border-l-4 border-l-amber-400' : ''}`}
+                className={`border-t border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer ${isLowStock(laptop) ? 'border-l-4 border-l-amber-400' : ''}`}
                 onClick={() => navigate(`/inventory/${laptop._id}`)}
               >
-                <td className="px-4 py-3 font-mono text-xs text-slate-600">{laptop.sku}</td>
+                <td className="px-4 py-3 font-mono text-xs text-slate-600 dark:text-slate-400">{laptop.sku}</td>
                 <td className="px-4 py-3">
-                  <p className="font-medium text-slate-900">{laptop.brand} {laptop.model}</p>
-                  {laptop.modelNumber && <p className="text-xs text-slate-400">{laptop.modelNumber}</p>}
+                  <p className="font-medium text-slate-900 dark:text-slate-100">{laptop.brand} {laptop.model}</p>
+                  {laptop.modelNumber && <p className="text-xs text-slate-400 dark:text-slate-500">{laptop.modelNumber}</p>}
                 </td>
                 <td className="px-4 py-3">
                   <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${conditionColor[laptop.condition] || ''}`}>
                     {laptop.condition}
                   </span>
                 </td>
-                <td className="px-4 py-3 text-xs text-slate-500 max-w-40 truncate">{compact(laptop.specs)}</td>
+                <td className="px-4 py-3 text-xs text-slate-500 dark:text-slate-400 max-w-40 truncate">{compact(laptop.specs)}</td>
                 <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                   {laptop.trackingMode === 'batch' ? (
                     <div className="flex items-center gap-1.5">
@@ -167,12 +165,12 @@ export default function Inventory() {
                         <button
                           disabled={qtyLoading[laptop._id] || laptop.quantity === 0}
                           onClick={() => handleQty(laptop, -1)}
-                          className="flex h-6 w-6 items-center justify-center rounded border border-slate-200 text-slate-500 hover:bg-slate-100 disabled:opacity-30"
+                          className="flex h-6 w-6 items-center justify-center rounded border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-30"
                         >
                           <Minus className="h-3 w-3" />
                         </button>
                       )}
-                      <span className={`min-w-6 text-center font-semibold ${laptop.quantity === 0 ? 'text-red-500' : isLowStock(laptop) ? 'text-amber-600' : 'text-slate-900'}`}>
+                      <span className={`min-w-6 text-center font-semibold ${laptop.quantity === 0 ? 'text-red-500' : isLowStock(laptop) ? 'text-amber-600' : 'text-slate-900 dark:text-slate-100'}`}>
                         {laptop.quantity}
                         {isLowStock(laptop) && laptop.quantity > 0 && (
                           <AlertTriangle className="inline ml-1 h-3 w-3 text-amber-500" />
@@ -181,23 +179,23 @@ export default function Inventory() {
                       <button
                         disabled={qtyLoading[laptop._id]}
                         onClick={() => handleQty(laptop, 1)}
-                        className="flex h-6 w-6 items-center justify-center rounded border border-slate-200 text-slate-500 hover:bg-slate-100 disabled:opacity-30"
+                        className="flex h-6 w-6 items-center justify-center rounded border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-30"
                       >
                         <Plus className="h-3 w-3" />
                       </button>
                     </div>
                   ) : (
-                    <span className="text-slate-700">1 unit</span>
+                    <span className="text-slate-700 dark:text-slate-300">1 unit</span>
                   )}
                 </td>
                 <td className="px-4 py-3 text-xs">
                   {user?.role === 'admin' ? (
                     <>
-                      <p className="text-slate-400">Cost: {currency(laptop.costPrice)}</p>
-                      <p className="font-medium text-slate-900">Sell: {currency(laptop.sellingPrice)}</p>
+                      <p className="text-slate-400 dark:text-slate-500">Cost: {currency(laptop.costPrice)}</p>
+                      <p className="font-medium text-slate-900 dark:text-slate-100">Sell: {currency(laptop.sellingPrice)}</p>
                     </>
                   ) : (
-                    <p className="font-medium text-slate-900">{currency(laptop.sellingPrice)}</p>
+                    <p className="font-medium text-slate-900 dark:text-slate-100">{currency(laptop.sellingPrice)}</p>
                   )}
                 </td>
                 <td className="px-4 py-3">
@@ -209,7 +207,7 @@ export default function Inventory() {
                   <div className="flex gap-1">
                     <button
                       onClick={() => setEditLaptop(laptop)}
-                      className="rounded p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+                      className="rounded p-1.5 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-600 dark:hover:text-slate-200"
                       title="Edit"
                     >
                       <Pencil className="h-4 w-4" />
@@ -217,7 +215,7 @@ export default function Inventory() {
                     {user?.role === 'admin' && (
                       <button
                         onClick={() => setDeleteTarget(laptop)}
-                        className="rounded p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-500"
+                        className="rounded p-1.5 text-slate-400 hover:bg-red-50 dark:hover:bg-red-950 hover:text-red-500"
                         title="Archive"
                       >
                         <Trash2 className="h-4 w-4" />
@@ -232,8 +230,8 @@ export default function Inventory() {
 
         {/* Pagination */}
         {total > 25 && (
-          <div className="flex items-center justify-between border-t border-slate-200 px-4 py-3">
-            <p className="text-xs text-slate-500">Showing {(page - 1) * 25 + 1}–{Math.min(page * 25, total)} of {total}</p>
+          <div className="flex items-center justify-between border-t border-slate-200 dark:border-slate-800 px-4 py-3">
+            <p className="text-xs text-slate-500 dark:text-slate-400">Showing {(page - 1) * 25 + 1}–{Math.min(page * 25, total)} of {total}</p>
             <div className="flex gap-1">
               <Button variant="secondary" size="sm" disabled={page === 1} onClick={() => setPage((p) => p - 1)}>
                 <ChevronLeft className="h-4 w-4" />
@@ -262,7 +260,7 @@ export default function Inventory() {
       {deleteTarget && (
         <Dialog open onClose={() => setDeleteTarget(null)}>
           <DialogContent title="Archive laptop?" onClose={() => setDeleteTarget(null)} className="max-w-sm">
-            <p className="text-sm text-slate-600 mb-4">
+            <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">
               Archive <strong>{deleteTarget.brand} {deleteTarget.model}</strong> ({deleteTarget.sku})?
               It will be hidden from inventory but preserved in sales history.
             </p>

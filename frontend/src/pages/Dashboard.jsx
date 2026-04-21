@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
+import { useTheme } from '@/hooks/useTheme';
 import { currency, date } from '@/lib/formatters';
 import api from '@/lib/api';
 
@@ -27,21 +28,19 @@ function Delta({ value }) {
 
 function KpiCard({ label, value, sub, delta, icon: Icon, accent }) {
   return (
-    <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+    <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-sm">
       <div className="flex items-center justify-between mb-3">
-        <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">{label}</p>
-        <div className={`flex h-8 w-8 items-center justify-center rounded-lg ${accent || 'bg-indigo-50'}`}>
-          <Icon className={`h-4 w-4 ${accent ? 'text-white' : 'text-indigo-600'}`} />
+        <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">{label}</p>
+        <div className={`flex h-8 w-8 items-center justify-center rounded-lg ${accent || 'bg-indigo-50 dark:bg-indigo-950'}`}>
+          <Icon className={`h-4 w-4 ${accent ? 'text-white' : 'text-indigo-600 dark:text-indigo-400'}`} />
         </div>
       </div>
-      <p className="text-2xl font-bold text-slate-900">{value}</p>
+      <p className="text-2xl font-bold text-slate-900 dark:text-slate-100">{value}</p>
       {delta !== undefined && <div className="mt-1"><Delta value={delta} /></div>}
-      {sub && !delta && <p className="text-xs text-slate-400 mt-0.5">{sub}</p>}
+      {sub && !delta && <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{sub}</p>}
     </div>
   );
 }
-
-const CHART_TOOLTIP_STYLE = { fontSize: 12, borderRadius: 8, border: '1px solid #e2e8f0' };
 
 // ─── Admin dashboard ────────────────────────────────────────────────────────
 function AdminDashboard() {
@@ -49,6 +48,7 @@ function AdminDashboard() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
+  const { dark } = useTheme();
 
   useEffect(() => {
     api.get('/reports/dashboard')
@@ -59,17 +59,23 @@ function AdminDashboard() {
   const fmt = (n) => (loading ? '…' : currency(n ?? 0));
   const num = (n) => (loading ? '…' : (n ?? 0).toLocaleString());
 
+  const gridColor = dark ? '#1e293b' : '#f1f5f9';
+  const axisColor = dark ? '#475569' : '#94a3b8';
+  const tooltipStyle = dark
+    ? { fontSize: 12, borderRadius: 8, border: '1px solid #334155', backgroundColor: '#1e293b', color: '#f1f5f9' }
+    : { fontSize: 12, borderRadius: 8, border: '1px solid #e2e8f0' };
+
   return (
     <div>
       {/* Header */}
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <div className="flex items-center gap-2 text-slate-400 text-xs font-medium uppercase tracking-wider mb-1">
+          <div className="flex items-center gap-2 text-slate-400 dark:text-slate-500 text-xs font-medium uppercase tracking-wider mb-1">
             <LayoutDashboard className="h-3.5 w-3.5" />
             Dashboard
           </div>
-          <h1 className="text-2xl font-semibold text-slate-900">Welcome back, {user?.name}</h1>
-          <p className="text-sm text-slate-500 mt-0.5">
+          <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">Welcome back, {user?.name}</h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
             {new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
           </p>
         </div>
@@ -117,17 +123,17 @@ function AdminDashboard() {
             { label: 'Stock Value (Retail)', val: currency(data.inventory.stockValueRetail) },
             { label: 'Units Sold This Year', val: data.thisYear.unitsSold?.toLocaleString() ?? '0' },
           ].map(({ label, val }) => (
-            <div key={label} className="rounded-lg border border-slate-200 bg-white px-4 py-3 shadow-sm">
-              <p className="text-xs text-slate-400 mb-0.5">{label}</p>
-              <p className="font-semibold text-slate-900">{val}</p>
+            <div key={label} className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3 shadow-sm">
+              <p className="text-xs text-slate-400 dark:text-slate-500 mb-0.5">{label}</p>
+              <p className="font-semibold text-slate-900 dark:text-slate-100">{val}</p>
             </div>
           ))}
         </div>
       )}
 
       {/* Sales trend chart */}
-      <div className="rounded-lg border border-slate-200 bg-white shadow-sm mb-6 p-5">
-        <h2 className="font-semibold text-slate-900 mb-4">Sales Trend — Last 30 Days</h2>
+      <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm mb-6 p-5">
+        <h2 className="font-semibold text-slate-900 dark:text-slate-100 mb-4">Sales Trend — Last 30 Days</h2>
         {loading ? (
           <div className="h-52 flex items-center justify-center text-sm text-slate-400">Loading…</div>
         ) : (
@@ -143,22 +149,22 @@ function AdminDashboard() {
                   <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+              <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
               <XAxis
                 dataKey="date"
-                tick={{ fontSize: 11, fill: '#94a3b8' }}
+                tick={{ fontSize: 11, fill: axisColor }}
                 tickFormatter={(d) => d.slice(5)}
                 tickLine={false}
               />
               <YAxis
-                tick={{ fontSize: 11, fill: '#94a3b8' }}
+                tick={{ fontSize: 11, fill: axisColor }}
                 tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`}
                 axisLine={false}
                 tickLine={false}
                 width={45}
               />
               <Tooltip
-                contentStyle={CHART_TOOLTIP_STYLE}
+                contentStyle={tooltipStyle}
                 formatter={(v, n) => [currency(v), n]}
                 labelFormatter={(l) => `Date: ${l}`}
               />
@@ -173,10 +179,10 @@ function AdminDashboard() {
       {/* Bottom row */}
       <div className="grid grid-cols-3 gap-6 mb-6">
         {/* Top brands */}
-        <div className="rounded-lg border border-slate-200 bg-white shadow-sm p-5">
+        <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm p-5">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-semibold text-slate-900">Top Brands This Month</h2>
-            <BarChart2 className="h-4 w-4 text-slate-400" />
+            <h2 className="font-semibold text-slate-900 dark:text-slate-100">Top Brands This Month</h2>
+            <BarChart2 className="h-4 w-4 text-slate-400 dark:text-slate-500" />
           </div>
           {loading ? (
             <div className="h-40 flex items-center justify-center text-sm text-slate-400">Loading…</div>
@@ -185,10 +191,10 @@ function AdminDashboard() {
           ) : (
             <ResponsiveContainer width="100%" height={180}>
               <BarChart layout="vertical" data={data.topBrands} margin={{ left: 5, right: 10 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" horizontal={false} />
-                <XAxis type="number" tick={{ fontSize: 10, fill: '#94a3b8' }} tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} tickLine={false} axisLine={false} />
-                <YAxis type="category" dataKey="brand" tick={{ fontSize: 12, fill: '#475569' }} width={55} tickLine={false} axisLine={false} />
-                <Tooltip contentStyle={CHART_TOOLTIP_STYLE} formatter={(v) => [currency(v), 'Revenue']} />
+                <CartesianGrid strokeDasharray="3 3" stroke={gridColor} horizontal={false} />
+                <XAxis type="number" tick={{ fontSize: 10, fill: axisColor }} tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} tickLine={false} axisLine={false} />
+                <YAxis type="category" dataKey="brand" tick={{ fontSize: 12, fill: axisColor }} width={55} tickLine={false} axisLine={false} />
+                <Tooltip contentStyle={tooltipStyle} formatter={(v) => [currency(v), 'Revenue']} />
                 <Bar dataKey="revenue" fill="#4f46e5" radius={[0, 4, 4, 0]} name="Revenue" />
               </BarChart>
             </ResponsiveContainer>
@@ -196,10 +202,10 @@ function AdminDashboard() {
         </div>
 
         {/* Recent sales */}
-        <div className="col-span-2 rounded-lg border border-slate-200 bg-white shadow-sm overflow-hidden">
-          <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4">
-            <h2 className="font-semibold text-slate-900">Recent Sales</h2>
-            <button onClick={() => navigate('/sales')} className="text-xs font-medium text-indigo-600 hover:text-indigo-700">
+        <div className="col-span-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm overflow-hidden">
+          <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-5 py-4">
+            <h2 className="font-semibold text-slate-900 dark:text-slate-100">Recent Sales</h2>
+            <button onClick={() => navigate('/sales')} className="text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300">
               View all →
             </button>
           </div>
@@ -207,7 +213,7 @@ function AdminDashboard() {
             <p className="py-8 text-center text-sm text-slate-400">Loading…</p>
           ) : (data?.recentSales?.length ?? 0) === 0 ? (
             <div className="py-10 text-center">
-              <ShoppingCart className="mx-auto h-8 w-8 text-slate-300 mb-2" />
+              <ShoppingCart className="mx-auto h-8 w-8 text-slate-300 dark:text-slate-600 mb-2" />
               <p className="text-sm text-slate-400">No sales yet</p>
               <Button className="mt-3" size="sm" onClick={() => navigate('/sales/new')}>Make first sale</Button>
             </div>
@@ -215,12 +221,12 @@ function AdminDashboard() {
             <table className="w-full text-sm">
               <tbody>
                 {data.recentSales.map((s) => (
-                  <tr key={s._id} className="border-t border-slate-100 hover:bg-slate-50">
-                    <td className="px-5 py-3 font-mono text-xs text-indigo-600">{s.invoiceNumber}</td>
-                    <td className="px-5 py-3 font-medium text-slate-900">{s.customer.name}</td>
-                    <td className="px-5 py-3 text-slate-400 text-xs">{date(s.saleDate)}</td>
-                    <td className="px-5 py-3 text-slate-500 text-xs">{s.paymentMethod}</td>
-                    <td className="px-5 py-3 font-semibold text-slate-900 text-right">{currency(s.grandTotal)}</td>
+                  <tr key={s._id} className="border-t border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800">
+                    <td className="px-5 py-3 font-mono text-xs text-indigo-600 dark:text-indigo-400">{s.invoiceNumber}</td>
+                    <td className="px-5 py-3 font-medium text-slate-900 dark:text-slate-100">{s.customer.name}</td>
+                    <td className="px-5 py-3 text-slate-400 dark:text-slate-500 text-xs">{date(s.saleDate)}</td>
+                    <td className="px-5 py-3 text-slate-500 dark:text-slate-400 text-xs">{s.paymentMethod}</td>
+                    <td className="px-5 py-3 font-semibold text-slate-900 dark:text-slate-100 text-right">{currency(s.grandTotal)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -233,22 +239,22 @@ function AdminDashboard() {
       {(data?.lowStockItems?.length ?? 0) > 0 && (
         <div>
           <div className="flex items-center justify-between mb-3">
-            <h2 className="font-semibold text-slate-900 flex items-center gap-2">
+            <h2 className="font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2">
               <AlertTriangle className="h-4 w-4 text-amber-500" />
               Low Stock Alerts
             </h2>
-            <button onClick={() => navigate('/inventory')} className="text-xs font-medium text-indigo-600 hover:text-indigo-700">
+            <button onClick={() => navigate('/inventory')} className="text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-700">
               Manage inventory →
             </button>
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
             {data.lowStockItems.map((l) => (
-              <div key={l._id} className="rounded-lg border border-amber-200 bg-amber-50 p-4">
-                <p className="font-medium text-slate-900 text-sm">{l.brand} {l.model}</p>
-                <p className="text-xs text-slate-400 mt-0.5">{l.sku}</p>
+              <div key={l._id} className="rounded-lg border border-amber-200 dark:border-amber-900 bg-amber-50 dark:bg-amber-950/40 p-4">
+                <p className="font-medium text-slate-900 dark:text-slate-100 text-sm">{l.brand} {l.model}</p>
+                <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{l.sku}</p>
                 <div className="mt-3 flex items-center justify-between">
-                  <span className="text-xs text-amber-700">
-                    <span className="font-bold text-amber-600 text-lg">{l.quantity}</span> left
+                  <span className="text-xs text-amber-700 dark:text-amber-400">
+                    <span className="font-bold text-amber-600 dark:text-amber-400 text-lg">{l.quantity}</span> left
                   </span>
                   <Button size="sm" variant="secondary" onClick={() => navigate(`/inventory/${l._id}`)}>
                     + Restock
@@ -299,12 +305,12 @@ function SalespersonDashboard() {
     <div>
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <div className="flex items-center gap-2 text-slate-400 text-xs font-medium uppercase tracking-wider mb-1">
+          <div className="flex items-center gap-2 text-slate-400 dark:text-slate-500 text-xs font-medium uppercase tracking-wider mb-1">
             <LayoutDashboard className="h-3.5 w-3.5" />
             Dashboard
           </div>
-          <h1 className="text-2xl font-semibold text-slate-900">Welcome back, {user?.name}</h1>
-          <p className="text-sm text-slate-500 mt-0.5">
+          <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">Welcome back, {user?.name}</h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
             {new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
           </p>
         </div>
@@ -320,10 +326,10 @@ function SalespersonDashboard() {
         <KpiCard label="Revenue This Month" value={fmt(stats?.monthRevenue)} icon={TrendingUp} />
       </div>
 
-      <div className="rounded-lg border border-slate-200 bg-white shadow-sm overflow-hidden">
-        <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4">
-          <h2 className="font-semibold text-slate-900">Recent Sales</h2>
-          <button onClick={() => navigate('/sales')} className="text-xs font-medium text-indigo-600 hover:text-indigo-700">
+      <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm overflow-hidden">
+        <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-5 py-4">
+          <h2 className="font-semibold text-slate-900 dark:text-slate-100">Recent Sales</h2>
+          <button onClick={() => navigate('/sales')} className="text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-700">
             View all →
           </button>
         </div>
@@ -331,7 +337,7 @@ function SalespersonDashboard() {
           <p className="py-8 text-center text-sm text-slate-400">Loading…</p>
         ) : recentSales.length === 0 ? (
           <div className="py-10 text-center">
-            <ShoppingCart className="mx-auto h-8 w-8 text-slate-300 mb-2" />
+            <ShoppingCart className="mx-auto h-8 w-8 text-slate-300 dark:text-slate-600 mb-2" />
             <p className="text-sm text-slate-400">No sales yet</p>
             <Button className="mt-3" size="sm" onClick={() => navigate('/sales/new')}>Make first sale</Button>
           </div>
@@ -339,12 +345,12 @@ function SalespersonDashboard() {
           <table className="w-full text-sm">
             <tbody>
               {recentSales.map((s) => (
-                <tr key={s._id} className="border-t border-slate-100 hover:bg-slate-50">
-                  <td className="px-5 py-3 font-mono text-xs text-indigo-600">{s.invoiceNumber}</td>
-                  <td className="px-5 py-3 font-medium text-slate-900">{s.customer.name}</td>
-                  <td className="px-5 py-3 text-slate-400 text-xs">{date(s.saleDate)}</td>
-                  <td className="px-5 py-3 text-slate-500 text-xs">{s.paymentMethod}</td>
-                  <td className="px-5 py-3 font-semibold text-slate-900 text-right">{currency(s.grandTotal)}</td>
+                <tr key={s._id} className="border-t border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800">
+                  <td className="px-5 py-3 font-mono text-xs text-indigo-600 dark:text-indigo-400">{s.invoiceNumber}</td>
+                  <td className="px-5 py-3 font-medium text-slate-900 dark:text-slate-100">{s.customer.name}</td>
+                  <td className="px-5 py-3 text-slate-400 dark:text-slate-500 text-xs">{date(s.saleDate)}</td>
+                  <td className="px-5 py-3 text-slate-500 dark:text-slate-400 text-xs">{s.paymentMethod}</td>
+                  <td className="px-5 py-3 font-semibold text-slate-900 dark:text-slate-100 text-right">{currency(s.grandTotal)}</td>
                 </tr>
               ))}
             </tbody>

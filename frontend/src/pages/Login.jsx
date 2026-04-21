@@ -43,7 +43,7 @@ export default function Login() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
+    <div className="flex min-h-screen items-center justify-center bg-slate-50 dark:bg-slate-950 px-4">
       <div className="w-full max-w-sm">
         {/* Brand */}
         <div className="mb-8 flex flex-col items-center gap-3">
@@ -51,8 +51,8 @@ export default function Login() {
             <Store className="h-6 w-6 text-white" />
           </div>
           <div className="text-center">
-            <h1 className="text-xl font-semibold text-slate-900">Laptop Shop</h1>
-            <p className="text-sm text-slate-500">Staff portal</p>
+            <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-100">Laptop Shop</h1>
+            <p className="text-sm text-slate-500 dark:text-slate-400">Staff portal</p>
           </div>
         </div>
 
