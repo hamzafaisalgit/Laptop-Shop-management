@@ -22,7 +22,7 @@ const DRAFT_KEY = 'sale_draft';
 
 // ── Customer section ──────────────────────────────────────────────────────────
 function CustomerSection({ value, onChange }) {
-  const [mode, setMode] = useState('search'); // 'search' | 'new'
+  const [mode, setMode] = useState(() => value.name && !value.customerId ? 'new' : 'search');
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
   const [searching, setSearching] = useState(false);
@@ -43,7 +43,7 @@ function CustomerSection({ value, onChange }) {
     return () => clearTimeout(timerRef.current);
   }, [query, mode]);
 
-  if (value.customerId || value.name) {
+  if (value.customerId) {
     return (
       <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
         <div>

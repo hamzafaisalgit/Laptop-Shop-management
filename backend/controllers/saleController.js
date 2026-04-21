@@ -155,8 +155,6 @@ exports.list = async (req, res) => {
     const { from, to, customer, salesperson, paymentMethod, search, page = 1, limit = 25 } = req.query;
     const filter = {};
 
-    if (req.user.role !== 'admin') filter.salesperson = req.user._id;
-
     if (from || to) {
       filter.saleDate = {};
       if (from) filter.saleDate.$gte = new Date(from);
@@ -202,9 +200,6 @@ exports.getOne = async (req, res) => {
   try {
     const sale = await Sale.findById(req.params.id).populate('salesperson', 'name').lean();
     if (!sale) return res.status(404).json({ message: 'Not found' });
-    if (req.user.role !== 'admin' && String(sale.salesperson._id) !== String(req.user._id)) {
-      return res.status(403).json({ message: 'Access denied' });
-    }
     if (req.user.role !== 'admin') {
       delete sale.profit; delete sale.totalCost;
       sale.items = sale.items.map((i) => { delete i.costPrice; return i; });
