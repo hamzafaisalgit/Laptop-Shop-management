@@ -14,8 +14,8 @@ function TabBtn({ active, onClick, children }) {
       className={cn(
         'px-4 py-2 text-sm font-medium border-b-2 transition-colors',
         active
-          ? 'border-indigo-600 text-indigo-600'
-          : 'border-transparent text-slate-500 hover:text-slate-700'
+          ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400 dark:border-indigo-400'
+          : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
       )}
     >
       {children}
@@ -98,22 +98,24 @@ export default function BulkImportDialog({ open, onClose, onImported }) {
               onClick={() => fileRef.current?.click()}
               className={cn(
                 'flex cursor-pointer flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed py-12 transition-colors',
-                dragOver ? 'border-indigo-400 bg-indigo-50' : 'border-slate-200 bg-slate-50 hover:border-indigo-300 hover:bg-indigo-50/40'
+                dragOver
+                  ? 'border-indigo-400 bg-indigo-50 dark:bg-indigo-950/40'
+                  : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:border-indigo-300 hover:bg-indigo-50/40 dark:hover:bg-indigo-950/20'
               )}
             >
               <Upload className="h-8 w-8 text-slate-400" />
               <div className="text-center">
-                <p className="text-sm font-medium text-slate-700">Drop your .xlsx file here, or click to browse</p>
-                <p className="text-xs text-slate-400 mt-1">Only .xlsx format supported</p>
+                <p className="text-sm font-medium text-slate-700 dark:text-slate-200">Drop your .xlsx file here, or click to browse</p>
+                <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Only .xlsx format supported</p>
               </div>
               <input ref={fileRef} type="file" accept=".xlsx" className="hidden" onChange={(e) => handleFile(e.target.files[0])} />
             </div>
-            <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
-              <div className="flex items-center gap-2 text-sm text-slate-600">
+            <div className="flex items-center justify-between rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-4 py-3">
+              <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
                 <FileSpreadsheet className="h-4 w-4 text-indigo-500" />
                 Download the template to see required columns
               </div>
-              <a href="/api/laptops/import/template" download className="text-xs font-medium text-indigo-600 hover:text-indigo-700">
+              <a href="/api/laptops/import/template" download className="text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-700">
                 Download Template
               </a>
             </div>
@@ -125,9 +127,9 @@ export default function BulkImportDialog({ open, onClose, onImported }) {
             {/* Summary bar */}
             <div className="grid grid-cols-3 gap-3">
               {[
-                { icon: CheckCircle, color: 'text-emerald-600', bg: 'bg-emerald-50', label: `${newCount} will create`, },
-                { icon: GitMerge, color: 'text-indigo-600', bg: 'bg-indigo-50', label: `${mergeCount} will merge`, },
-                { icon: AlertCircle, color: 'text-red-500', bg: 'bg-red-50', label: `${preview.errors.length} errors`, },
+                { icon: CheckCircle, color: 'text-emerald-600 dark:text-emerald-400', bg: 'bg-emerald-50 dark:bg-emerald-950/40', label: `${newCount} will create` },
+                { icon: GitMerge, color: 'text-indigo-600 dark:text-indigo-400', bg: 'bg-indigo-50 dark:bg-indigo-950/40', label: `${mergeCount} will merge` },
+                { icon: AlertCircle, color: 'text-red-500 dark:text-red-400', bg: 'bg-red-50 dark:bg-red-950/40', label: `${preview.errors.length} errors` },
               ].map(({ icon: Icon, color, bg, label }) => (
                 <div key={label} className={cn('flex items-center gap-2 rounded-lg p-3', bg)}>
                   <Icon className={cn('h-5 w-5', color)} />
@@ -137,7 +139,7 @@ export default function BulkImportDialog({ open, onClose, onImported }) {
             </div>
 
             {/* Tabs */}
-            <div className="border-b border-slate-200">
+            <div className="border-b border-slate-200 dark:border-slate-800">
               <TabBtn active={tab === 'valid'} onClick={() => setTab('valid')}>
                 Create ({newCount})
               </TabBtn>
@@ -149,25 +151,25 @@ export default function BulkImportDialog({ open, onClose, onImported }) {
               </TabBtn>
             </div>
 
-            <div className="max-h-64 overflow-y-auto rounded-lg border border-slate-200">
+            <div className="max-h-64 overflow-y-auto rounded-lg border border-slate-200 dark:border-slate-700">
               {tab === 'valid' && (
                 <table className="w-full text-sm">
-                  <thead className="sticky top-0 bg-slate-50">
+                  <thead className="sticky top-0 bg-slate-50 dark:bg-slate-800">
                     <tr>
                       {['Brand', 'Model', 'Condition', 'Specs', 'Qty', 'Selling Price'].map((h) => (
-                        <th key={h} className="px-3 py-2 text-left text-xs font-medium text-slate-500">{h}</th>
+                        <th key={h} className="px-3 py-2 text-left text-xs font-medium text-slate-500 dark:text-slate-400">{h}</th>
                       ))}
                     </tr>
                   </thead>
                   <tbody>
                     {preview.valid.filter((r) => !r.mergeTargetId).map((r, i) => (
-                      <tr key={i} className="border-t border-slate-100">
-                        <td className="px-3 py-2">{r.row.brand}</td>
-                        <td className="px-3 py-2">{r.row.model}</td>
-                        <td className="px-3 py-2">{r.row.condition}</td>
-                        <td className="px-3 py-2 text-slate-400 text-xs">{[r.row.specs?.processor, r.row.specs?.ram, r.row.specs?.storage].filter(Boolean).join(' / ')}</td>
-                        <td className="px-3 py-2">{r.row.quantity}</td>
-                        <td className="px-3 py-2">PKR {r.row.sellingPrice?.toLocaleString()}</td>
+                      <tr key={i} className="border-t border-slate-100 dark:border-slate-700">
+                        <td className="px-3 py-2 text-slate-900 dark:text-slate-100">{r.row.brand}</td>
+                        <td className="px-3 py-2 text-slate-900 dark:text-slate-100">{r.row.model}</td>
+                        <td className="px-3 py-2 text-slate-700 dark:text-slate-300">{r.row.condition}</td>
+                        <td className="px-3 py-2 text-slate-400 dark:text-slate-500 text-xs">{[r.row.specs?.processor, r.row.specs?.ram, r.row.specs?.storage].filter(Boolean).join(' / ')}</td>
+                        <td className="px-3 py-2 text-slate-700 dark:text-slate-300">{r.row.quantity}</td>
+                        <td className="px-3 py-2 text-slate-700 dark:text-slate-300">PKR {r.row.sellingPrice?.toLocaleString()}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -176,20 +178,20 @@ export default function BulkImportDialog({ open, onClose, onImported }) {
 
               {tab === 'merge' && (
                 <table className="w-full text-sm">
-                  <thead className="sticky top-0 bg-slate-50">
+                  <thead className="sticky top-0 bg-slate-50 dark:bg-slate-800">
                     <tr>
                       {['Brand / Model', 'Incoming Qty', 'Merges Into', 'Existing Qty'].map((h) => (
-                        <th key={h} className="px-3 py-2 text-left text-xs font-medium text-slate-500">{h}</th>
+                        <th key={h} className="px-3 py-2 text-left text-xs font-medium text-slate-500 dark:text-slate-400">{h}</th>
                       ))}
                     </tr>
                   </thead>
                   <tbody>
                     {preview.valid.filter((r) => r.mergeTargetId).map((r, i) => (
-                      <tr key={i} className="border-t border-slate-100">
-                        <td className="px-3 py-2">{r.row.brand} {r.row.model}</td>
-                        <td className="px-3 py-2 font-medium text-indigo-600">+{r.row.quantity}</td>
-                        <td className="px-3 py-2 font-mono text-xs text-slate-500">{r.mergeTargetSku}</td>
-                        <td className="px-3 py-2">{r.mergeTargetQty}</td>
+                      <tr key={i} className="border-t border-slate-100 dark:border-slate-700">
+                        <td className="px-3 py-2 text-slate-900 dark:text-slate-100">{r.row.brand} {r.row.model}</td>
+                        <td className="px-3 py-2 font-medium text-indigo-600 dark:text-indigo-400">+{r.row.quantity}</td>
+                        <td className="px-3 py-2 font-mono text-xs text-slate-500 dark:text-slate-400">{r.mergeTargetSku}</td>
+                        <td className="px-3 py-2 text-slate-700 dark:text-slate-300">{r.mergeTargetQty}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -198,19 +200,19 @@ export default function BulkImportDialog({ open, onClose, onImported }) {
 
               {tab === 'errors' && (
                 <table className="w-full text-sm">
-                  <thead className="sticky top-0 bg-slate-50">
+                  <thead className="sticky top-0 bg-slate-50 dark:bg-slate-800">
                     <tr>
                       {['Line', 'Description', 'Errors'].map((h) => (
-                        <th key={h} className="px-3 py-2 text-left text-xs font-medium text-slate-500">{h}</th>
+                        <th key={h} className="px-3 py-2 text-left text-xs font-medium text-slate-500 dark:text-slate-400">{h}</th>
                       ))}
                     </tr>
                   </thead>
                   <tbody>
                     {preview.errors.map((e, i) => (
-                      <tr key={i} className="border-t border-slate-100">
+                      <tr key={i} className="border-t border-slate-100 dark:border-slate-700">
                         <td className="px-3 py-2 text-red-500 font-medium">{e.line}</td>
-                        <td className="px-3 py-2">{e.sku}</td>
-                        <td className="px-3 py-2 text-red-600 text-xs">{e.errors.join('; ')}</td>
+                        <td className="px-3 py-2 text-slate-700 dark:text-slate-300">{e.sku}</td>
+                        <td className="px-3 py-2 text-red-600 dark:text-red-400 text-xs">{e.errors.join('; ')}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -218,7 +220,7 @@ export default function BulkImportDialog({ open, onClose, onImported }) {
               )}
             </div>
 
-            <div className="flex items-center justify-between pt-2 border-t border-slate-100">
+            <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800">
               <div className="flex gap-2">
                 <Button variant="secondary" onClick={reset}>← Back</Button>
                 {preview.errors.length > 0 && (
@@ -238,15 +240,23 @@ export default function BulkImportDialog({ open, onClose, onImported }) {
         {step === 3 && result && (
           <div className="py-6 text-center space-y-4">
             <div className="flex justify-center">
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100">
-                <CheckCircle className="h-8 w-8 text-emerald-600" />
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-950">
+                <CheckCircle className="h-8 w-8 text-emerald-600 dark:text-emerald-400" />
               </div>
             </div>
             <div>
-              <p className="text-lg font-semibold text-slate-900">Import complete!</p>
-              <p className="text-sm text-slate-500 mt-1">
+              <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">Import complete!</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
                 {result.created} created · {result.merged} merged · {result.skipped} skipped
               </p>
+              {result.errors?.length > 0 && (
+                <div className="mt-3 rounded-lg border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/40 p-3 text-left max-h-40 overflow-y-auto">
+                  <p className="text-xs font-semibold text-red-600 dark:text-red-400 mb-2">Failed items:</p>
+                  {result.errors.map((e, i) => (
+                    <p key={i} className="text-xs text-red-600 dark:text-red-400">{e.brand} {e.model}: {e.error}</p>
+                  ))}
+                </div>
+              )}
             </div>
             <Button onClick={() => { onClose(); reset(); }}>Done</Button>
           </div>

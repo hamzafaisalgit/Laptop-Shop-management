@@ -92,32 +92,32 @@ async function parseLaptopExcel(buffer) {
     const incoming = {
       brand: row.brand,
       model: row.model,
-      modelNumber: row.modelNumber,
+      modelNumber: row.modelNumber || undefined,
       condition: row.condition,
       trackingMode,
-      serialNumber: row.serialNumber,
+      serialNumber: row.serialNumber || undefined,
       specs: {
-        processor: row.processor,
-        generation: row.generation,
-        ram: row.ram,
-        storage: row.storage,
-        gpu: row.gpu,
-        display: row.display,
-        battery: row.battery,
-        os: row.os,
-        keyboard: row.keyboard,
-        ports: row.ports,
-        weight: row.weight,
-        color: row.color,
+        processor: row.processor || undefined,
+        generation: row.generation || undefined,
+        ram: row.ram || undefined,
+        storage: row.storage || undefined,
+        gpu: row.gpu || undefined,
+        display: row.display || undefined,
+        battery: row.battery || undefined,
+        os: row.os || undefined,
+        keyboard: row.keyboard || undefined,
+        ports: row.ports || undefined,
+        weight: row.weight || undefined,
+        color: row.color || undefined,
         touchscreen: ['true', '1', 'yes'].includes((row.touchscreen || '').toLowerCase()),
       },
       costPrice: parseFloat(row.costPrice),
       sellingPrice: parseFloat(row.sellingPrice),
       minSalePrice: row.minSalePrice ? parseFloat(row.minSalePrice) : undefined,
-      supplier: row.supplier,
-      quantity: row.quantity ? parseInt(row.quantity, 10) : (trackingMode === 'batch' ? 1 : 1),
+      supplier: row.supplier || undefined,
+      quantity: row.quantity ? parseInt(row.quantity, 10) : 1,
       warrantyMonths: row.warrantyMonths ? parseInt(row.warrantyMonths, 10) : 0,
-      notes: row.notes,
+      notes: row.notes || undefined,
     };
 
     const mergeTarget = await findMergeCandidate(incoming);
@@ -131,27 +131,48 @@ async function commitImport(rows, userId) {
   let created = 0;
   let merged = 0;
   let skipped = 0;
+  const importErrors = [];
 
   for (const item of rows) {
     try {
       if (item.mergeTargetId) {
         await Laptop.findByIdAndUpdate(item.mergeTargetId, {
-          $inc: { quantity: item.row.quantity },
+          $inc: { quantity: item.row.quantity || 1 },
         });
         await logAction(userId, 'MERGE_IMPORT', 'Laptop', item.mergeTargetId, { addedQty: item.row.quantity });
         merged++;
       } else {
         const sku = await generateSku(item.row.brand, item.row.model, item.row.condition);
-        const laptop = await Laptop.create({ ...item.row, sku, addedBy: userId });
+        const laptopData = {
+          sku,
+          addedBy: userId,
+          brand: item.row.brand,
+          model: item.row.model,
+          modelNumber: item.row.modelNumber,
+          condition: item.row.condition,
+          trackingMode: item.row.trackingMode,
+          serialNumber: item.row.serialNumber,
+          specs: item.row.specs,
+          costPrice: Number(item.row.costPrice),
+          sellingPrice: Number(item.row.sellingPrice),
+          minSalePrice: item.row.minSalePrice ? Number(item.row.minSalePrice) : undefined,
+          supplier: item.row.supplier,
+          quantity: Number(item.row.quantity) || 1,
+          warrantyMonths: Number(item.row.warrantyMonths) || 0,
+          notes: item.row.notes,
+        };
+        const laptop = await Laptop.create(laptopData);
         await logAction(userId, 'CREATE_IMPORT', 'Laptop', laptop._id, { sku });
         created++;
       }
-    } catch {
+    } catch (err) {
+      console.error(`[Import] Failed to import ${item.row?.brand} ${item.row?.model}:`, err.message);
+      importErrors.push({ brand: item.row?.brand, model: item.row?.model, error: err.message });
       skipped++;
     }
   }
 
-  return { created, merged, skipped };
+  return { created, merged, skipped, errors: importErrors };
 }
 
 module.exports = { parseLaptopExcel, commitImport };

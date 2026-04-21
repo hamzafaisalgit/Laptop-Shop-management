@@ -177,8 +177,8 @@ export default function LaptopFormDialog({ open, onClose, laptop, onSaved }) {
                   onClick={() => setValue('trackingMode', mode)}
                   className={`flex-1 rounded-lg border px-4 py-2.5 text-sm font-medium transition-colors ${
                     trackingMode === mode
-                      ? 'border-indigo-600 bg-indigo-50 text-indigo-700'
-                      : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
+                      ? 'border-indigo-600 bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300'
+                      : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700'
                   }`}
                 >
                   {mode === 'batch' ? '📦 New Stock (Batch)' : '🖥️ Single Unit'}
@@ -248,7 +248,7 @@ export default function LaptopFormDialog({ open, onClose, laptop, onSaved }) {
               <button
                 type="button"
                 onClick={() => setSpecsOpen((p) => !p)}
-                className="flex items-center gap-1.5 text-sm font-medium text-indigo-600 hover:text-indigo-700"
+                className="flex items-center gap-1.5 text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300"
               >
                 {specsOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                 {specsOpen ? 'Hide specs' : 'Add specs (processor, RAM, storage…)'}
@@ -282,7 +282,7 @@ export default function LaptopFormDialog({ open, onClose, laptop, onSaved }) {
               <Textarea placeholder="Optional notes…" rows={2} {...register('notes')} />
             </Field>
 
-            <div className="flex justify-end gap-3 pt-2 border-t border-slate-100">
+            <div className="flex justify-end gap-3 pt-2 border-t border-slate-100 dark:border-slate-800">
               <Button type="button" variant="secondary" onClick={onClose}>Cancel</Button>
               <Button type="submit" disabled={isSubmitting}>
                 {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
@@ -297,7 +297,7 @@ export default function LaptopFormDialog({ open, onClose, laptop, onSaved }) {
       {mergeDialog && (
         <Dialog open onClose={() => setMergeDialog(null)}>
           <DialogContent title="Identical batch found" onClose={() => setMergeDialog(null)} className="max-w-sm">
-            <p className="text-sm text-slate-600 mb-4">
+            <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">
               An existing batch <strong>{mergeDialog.existingSku}</strong> already has{' '}
               <strong>{mergeDialog.existingQty} units</strong> with the same specs and price.
               What would you like to do?

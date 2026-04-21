@@ -13,9 +13,9 @@ import api from '@/lib/api';
 function Row({ label, value }) {
   if (!value && value !== 0) return null;
   return (
-    <div className="flex justify-between py-2 border-b border-slate-100 last:border-0">
-      <span className="text-sm text-slate-500">{label}</span>
-      <span className="text-sm font-medium text-slate-900">{value}</span>
+    <div className="flex justify-between py-2 border-b border-slate-100 dark:border-slate-700 last:border-0">
+      <span className="text-sm text-slate-500 dark:text-slate-400">{label}</span>
+      <span className="text-sm font-medium text-slate-900 dark:text-slate-100">{value}</span>
     </div>
   );
 }
@@ -86,8 +86,8 @@ export default function InventoryDetail() {
           <ArrowLeft className="h-4 w-4" /> Back
         </Button>
         <div className="flex-1">
-          <h1 className="text-2xl font-semibold text-slate-900">{laptop.brand} {laptop.model}</h1>
-          <p className="text-sm font-mono text-slate-400">{laptop.sku}</p>
+          <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">{laptop.brand} {laptop.model}</h1>
+          <p className="text-sm font-mono text-slate-400 dark:text-slate-500">{laptop.sku}</p>
         </div>
         <Button variant="secondary" onClick={() => setEditOpen(true)}>
           <Pencil className="h-4 w-4" /> Edit
@@ -97,8 +97,8 @@ export default function InventoryDetail() {
       <div className="grid grid-cols-3 gap-6">
         {/* Main info */}
         <div className="col-span-2 space-y-6">
-          <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-            <h2 className="font-semibold text-slate-900 mb-4">Overview</h2>
+          <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 shadow-sm">
+            <h2 className="font-semibold text-slate-900 dark:text-slate-100 mb-4">Overview</h2>
             <div className="grid grid-cols-2 gap-x-8">
               <div>
                 <Row label="Condition" value={<span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${conditionColor[laptop.condition]}`}>{laptop.condition}</span>} />
@@ -118,7 +118,7 @@ export default function InventoryDetail() {
               </div>
             </div>
             {laptop.notes && (
-              <div className="mt-4 rounded-lg bg-slate-50 px-4 py-3 text-sm text-slate-600">
+              <div className="mt-4 rounded-lg bg-slate-50 dark:bg-slate-800 px-4 py-3 text-sm text-slate-600 dark:text-slate-300">
                 {laptop.notes}
               </div>
             )}
@@ -126,8 +126,8 @@ export default function InventoryDetail() {
 
           {/* Specs */}
           {laptop.specs && Object.values(laptop.specs).some(Boolean) && (
-            <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-              <h2 className="font-semibold text-slate-900 mb-4">Specifications</h2>
+            <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 shadow-sm">
+              <h2 className="font-semibold text-slate-900 dark:text-slate-100 mb-4">Specifications</h2>
               <div className="grid grid-cols-2 gap-x-8">
                 {[
                   ['Processor', laptop.specs.processor],
@@ -153,21 +153,21 @@ export default function InventoryDetail() {
         <div className="space-y-6">
           {/* Quantity card */}
           {laptop.trackingMode === 'batch' && (
-            <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-              <h2 className="font-semibold text-slate-900 mb-4">Stock</h2>
+            <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 shadow-sm">
+              <h2 className="font-semibold text-slate-900 dark:text-slate-100 mb-4">Stock</h2>
               <div className="flex items-center gap-3 mb-4">
                 <button
                   disabled={qtyLoading || laptop.quantity === 0 || user?.role !== 'admin'}
                   onClick={() => handleDelta(-1)}
-                  className="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-30 text-xl font-bold"
+                  className="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-30 text-xl font-bold"
                 >
                   −
                 </button>
-                <span className="flex-1 text-center text-3xl font-bold text-slate-900">{laptop.quantity}</span>
+                <span className="flex-1 text-center text-3xl font-bold text-slate-900 dark:text-slate-100">{laptop.quantity}</span>
                 <button
                   disabled={qtyLoading}
                   onClick={() => handleDelta(1)}
-                  className="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-30 text-xl font-bold"
+                  className="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-30 text-xl font-bold"
                 >
                   +
                 </button>
@@ -189,18 +189,18 @@ export default function InventoryDetail() {
           )}
 
           {/* Audit log */}
-          <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-            <h2 className="font-semibold text-slate-900 mb-4 flex items-center gap-2">
-              <Clock className="h-4 w-4 text-slate-400" /> Recent Activity
+          <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 shadow-sm">
+            <h2 className="font-semibold text-slate-900 dark:text-slate-100 mb-4 flex items-center gap-2">
+              <Clock className="h-4 w-4 text-slate-400 dark:text-slate-500" /> Recent Activity
             </h2>
             {audit.length === 0 ? (
-              <p className="text-sm text-slate-400">No activity yet.</p>
+              <p className="text-sm text-slate-400 dark:text-slate-500">No activity yet.</p>
             ) : (
               <div className="space-y-2">
                 {audit.map((log) => (
                   <div key={log._id} className="flex justify-between text-xs">
-                    <span className="font-medium text-slate-700">{log.action}</span>
-                    <span className="text-slate-400">{log.user?.name || '—'}</span>
+                    <span className="font-medium text-slate-700 dark:text-slate-300">{log.action}</span>
+                    <span className="text-slate-400 dark:text-slate-500">{log.user?.name || '—'}</span>
                   </div>
                 ))}
               </div>

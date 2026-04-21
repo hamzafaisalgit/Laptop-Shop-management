@@ -17,3 +17,32 @@ html.dark body {
   background-color: #020617;
   color: #f1f5f9;
 }
+
+/* Thin, unobtrusive scrollbars */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #e2e8f0;
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #cbd5e1;
+}
+html.dark ::-webkit-scrollbar-thumb {
+  background: #1e293b;
+}
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #e2e8f0 transparent;
+}
+html.dark * {
+  scrollbar-color: #1e293b transparent;
+}

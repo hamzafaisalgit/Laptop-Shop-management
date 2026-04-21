@@ -45,12 +45,12 @@ function CustomerSection({ value, onChange }) {
 
   if (value.customerId) {
     return (
-      <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
+      <div className="flex items-center justify-between rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-4 py-3">
         <div>
-          <p className="font-medium text-slate-900">{value.name}</p>
-          <p className="text-xs text-slate-400">{value.phone || 'No phone'}</p>
+          <p className="font-medium text-slate-900 dark:text-slate-100">{value.name}</p>
+          <p className="text-xs text-slate-400 dark:text-slate-500">{value.phone || 'No phone'}</p>
         </div>
-        <button onClick={() => onChange({})} className="text-slate-400 hover:text-slate-600">
+        <button onClick={() => onChange({})} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
           <X className="h-4 w-4" />
         </button>
       </div>
@@ -63,14 +63,22 @@ function CustomerSection({ value, onChange }) {
         <button
           type="button"
           onClick={() => setMode('search')}
-          className={`flex-1 rounded-lg border py-2 text-sm font-medium transition-colors ${mode === 'search' ? 'border-indigo-600 bg-indigo-50 text-indigo-700' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}`}
+          className={`flex-1 rounded-lg border py-2 text-sm font-medium transition-colors ${
+            mode === 'search'
+              ? 'border-indigo-600 bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300'
+              : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
+          }`}
         >
           Search existing
         </button>
         <button
           type="button"
           onClick={() => setMode('new')}
-          className={`flex-1 rounded-lg border py-2 text-sm font-medium transition-colors ${mode === 'new' ? 'border-indigo-600 bg-indigo-50 text-indigo-700' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}`}
+          className={`flex-1 rounded-lg border py-2 text-sm font-medium transition-colors ${
+            mode === 'new'
+              ? 'border-indigo-600 bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300'
+              : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
+          }`}
         >
           New customer
         </button>
@@ -86,16 +94,16 @@ function CustomerSection({ value, onChange }) {
             className="pl-9"
           />
           {query && results.length > 0 && (
-            <div className="absolute top-full z-20 mt-1 w-full rounded-lg border border-slate-200 bg-white shadow-lg">
+            <div className="absolute top-full z-20 mt-1 w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-lg">
               {results.map((c) => (
                 <button
                   key={c._id}
                   type="button"
                   onClick={() => { onChange({ customerId: c._id, name: c.name, phone: c.phone, cnic: c.cnic, email: c.email, address: c.address }); setQuery(''); setResults([]); }}
-                  className="flex w-full items-center justify-between px-4 py-2.5 hover:bg-slate-50 text-left"
+                  className="flex w-full items-center justify-between px-4 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-700 text-left"
                 >
-                  <span className="font-medium text-sm text-slate-900">{c.name}</span>
-                  <span className="text-xs text-slate-400">{c.phone}</span>
+                  <span className="font-medium text-sm text-slate-900 dark:text-slate-100">{c.name}</span>
+                  <span className="text-xs text-slate-400 dark:text-slate-500">{c.phone}</span>
                 </button>
               ))}
             </div>
@@ -166,7 +174,7 @@ function LaptopPicker({ onSelect, excludeIds = [] }) {
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
         <Input autoFocus placeholder="Search by SKU, brand, model…" value={query} onChange={(e) => setQuery(e.target.value)} className="pl-9" />
       </div>
-      <div className="max-h-72 overflow-y-auto rounded-lg border border-slate-200 divide-y divide-slate-100">
+      <div className="max-h-72 overflow-y-auto rounded-lg border border-slate-200 dark:border-slate-700 divide-y divide-slate-100 dark:divide-slate-700">
         {loading && <p className="py-6 text-center text-sm text-slate-400">Searching…</p>}
         {!loading && results.length === 0 && (
           <p className="py-6 text-center text-sm text-slate-400">No in-stock laptops found</p>
@@ -176,16 +184,16 @@ function LaptopPicker({ onSelect, excludeIds = [] }) {
             key={l._id}
             type="button"
             onClick={() => onSelect(l)}
-            className="flex w-full items-center justify-between px-4 py-3 hover:bg-indigo-50 text-left transition-colors"
+            className="flex w-full items-center justify-between px-4 py-3 hover:bg-indigo-50 dark:hover:bg-indigo-950 text-left transition-colors"
           >
             <div>
-              <p className="font-medium text-sm text-slate-900">{l.brand} {l.model}</p>
-              <p className="text-xs text-slate-400">{compact(l.specs)} · {l.condition}</p>
-              <p className="font-mono text-xs text-slate-400 mt-0.5">{l.sku}</p>
+              <p className="font-medium text-sm text-slate-900 dark:text-slate-100">{l.brand} {l.model}</p>
+              <p className="text-xs text-slate-400 dark:text-slate-500">{compact(l.specs)} · {l.condition}</p>
+              <p className="font-mono text-xs text-slate-400 dark:text-slate-500 mt-0.5">{l.sku}</p>
             </div>
             <div className="text-right">
-              <p className="font-semibold text-sm text-slate-900">{currency(l.sellingPrice)}</p>
-              <p className="text-xs text-slate-400">{l.trackingMode === 'batch' ? `${l.quantity} in stock` : '1 unit'}</p>
+              <p className="font-semibold text-sm text-slate-900 dark:text-slate-100">{currency(l.sellingPrice)}</p>
+              <p className="text-xs text-slate-400 dark:text-slate-500">{l.trackingMode === 'batch' ? `${l.quantity} in stock` : '1 unit'}</p>
             </div>
           </button>
         ))}
@@ -309,12 +317,12 @@ export default function NewSale() {
   if (successSale) {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center gap-6">
-        <div className="flex h-20 w-20 items-center justify-center rounded-full bg-emerald-100">
-          <CheckCircle className="h-10 w-10 text-emerald-600" />
+        <div className="flex h-20 w-20 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-950">
+          <CheckCircle className="h-10 w-10 text-emerald-600 dark:text-emerald-400" />
         </div>
         <div className="text-center">
-          <h2 className="text-2xl font-semibold text-slate-900">Sale Complete!</h2>
-          <p className="text-slate-500 mt-1">{successSale.invoiceNumber} · {currency(successSale.grandTotal)}</p>
+          <h2 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">Sale Complete!</h2>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">{successSale.invoiceNumber} · {currency(successSale.grandTotal)}</p>
         </div>
         <div className="flex gap-3">
           <Button onClick={() => window.open(`/api/sales/${successSale._id}/invoice`, '_blank')}>
@@ -332,23 +340,23 @@ export default function NewSale() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-semibold text-slate-900">New Sale</h1>
-        <p className="text-sm text-slate-500 mt-0.5">Create a new sale invoice</p>
+        <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">New Sale</h1>
+        <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Create a new sale invoice</p>
       </div>
 
       <div className="flex gap-6 items-start">
         {/* Left column — 2/3 */}
         <div className="flex-1 space-y-5 min-w-0">
           {/* Customer */}
-          <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-            <h2 className="font-semibold text-slate-900 mb-3">Customer</h2>
+          <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-sm">
+            <h2 className="font-semibold text-slate-900 dark:text-slate-100 mb-3">Customer</h2>
             <CustomerSection value={customer} onChange={setCustomer} />
           </div>
 
           {/* Items */}
-          <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+          <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-sm">
             <div className="flex items-center justify-between mb-3">
-              <h2 className="font-semibold text-slate-900">Laptops</h2>
+              <h2 className="font-semibold text-slate-900 dark:text-slate-100">Laptops</h2>
               <Button size="sm" onClick={() => setPickerOpen(true)}>
                 <Plus className="h-4 w-4" /> Add Laptop
               </Button>
@@ -364,17 +372,17 @@ export default function NewSale() {
                 {lineItems.map((item, idx) => {
                   const belowMin = item.minSalePrice && item.unitPrice < item.minSalePrice;
                   return (
-                    <div key={idx} className={`rounded-lg border p-3 ${belowMin ? 'border-amber-300 bg-amber-50' : 'border-slate-200 bg-slate-50'}`}>
+                    <div key={idx} className={`rounded-lg border p-3 ${belowMin ? 'border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/40' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'}`}>
                       <div className="flex items-start gap-3">
                         <div className="flex-1 min-w-0">
-                          <p className="font-medium text-sm text-slate-900">{item.brand} {item.model}</p>
-                          <p className="text-xs text-slate-400">{compact(item.specs)} · {item.condition}</p>
-                          <p className="font-mono text-xs text-slate-400">{item.sku}{item.serialNumber ? ` · ${item.serialNumber}` : ''}</p>
+                          <p className="font-medium text-sm text-slate-900 dark:text-slate-100">{item.brand} {item.model}</p>
+                          <p className="text-xs text-slate-400 dark:text-slate-500">{compact(item.specs)} · {item.condition}</p>
+                          <p className="font-mono text-xs text-slate-400 dark:text-slate-500">{item.sku}{item.serialNumber ? ` · ${item.serialNumber}` : ''}</p>
                         </div>
                         <div className="flex items-center gap-2 shrink-0">
                           {item.trackingMode === 'batch' && (
                             <div className="flex items-center gap-1">
-                              <Label className="text-xs text-slate-500">Qty</Label>
+                              <Label className="text-xs text-slate-500 dark:text-slate-400">Qty</Label>
                               <Input
                                 type="number"
                                 min={1}
@@ -386,7 +394,7 @@ export default function NewSale() {
                             </div>
                           )}
                           <div className="flex items-center gap-1">
-                            <Label className="text-xs text-slate-500">Price</Label>
+                            <Label className="text-xs text-slate-500 dark:text-slate-400">Price</Label>
                             <Input
                               type="number"
                               min={0}
@@ -401,12 +409,12 @@ export default function NewSale() {
                         </div>
                       </div>
                       {belowMin && (
-                        <div className="flex items-center gap-1.5 mt-2 text-xs text-amber-700">
+                        <div className="flex items-center gap-1.5 mt-2 text-xs text-amber-700 dark:text-amber-400">
                           <AlertTriangle className="h-3.5 w-3.5" />
                           Price is below min sale price ({currency(item.minSalePrice)}). You can still proceed.
                         </div>
                       )}
-                      <p className="text-right text-sm font-semibold text-slate-900 mt-1">{currency(item.unitPrice * item.qty)}</p>
+                      <p className="text-right text-sm font-semibold text-slate-900 dark:text-slate-100 mt-1">{currency(item.unitPrice * item.qty)}</p>
                     </div>
                   );
                 })}
@@ -415,15 +423,15 @@ export default function NewSale() {
           </div>
 
           {/* Accessories */}
-          <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+          <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-sm">
             <div className="flex items-center justify-between mb-3">
-              <h2 className="font-semibold text-slate-900">Accessories</h2>
+              <h2 className="font-semibold text-slate-900 dark:text-slate-100">Accessories</h2>
               <Button size="sm" variant="secondary" onClick={addAccessory}>
                 <Plus className="h-4 w-4" /> Add
               </Button>
             </div>
             {accessories.length === 0 ? (
-              <p className="text-sm text-slate-400 py-2">No accessories added</p>
+              <p className="text-sm text-slate-400 dark:text-slate-500 py-2">No accessories added</p>
             ) : (
               <div className="space-y-2">
                 {accessories.map((acc, idx) => (
@@ -431,7 +439,7 @@ export default function NewSale() {
                     <Input placeholder="Item name" value={acc.name} onChange={(e) => updateAcc(idx, 'name', e.target.value)} className="flex-1 text-sm h-8" />
                     <Input type="number" min={0} placeholder="Price" value={acc.unitPrice} onChange={(e) => updateAcc(idx, 'unitPrice', parseFloat(e.target.value) || 0)} className="w-28 text-sm h-8" />
                     <Input type="number" min={1} value={acc.qty} onChange={(e) => updateAcc(idx, 'qty', parseInt(e.target.value, 10) || 1)} className="w-16 text-center text-sm h-8" />
-                    <span className="text-sm font-medium w-24 text-right">{currency((acc.unitPrice || 0) * (acc.qty || 1))}</span>
+                    <span className="text-sm font-medium w-24 text-right text-slate-700 dark:text-slate-300">{currency((acc.unitPrice || 0) * (acc.qty || 1))}</span>
                     <button onClick={() => removeAcc(idx)} className="text-slate-400 hover:text-red-500 p-1"><X className="h-4 w-4" /></button>
                   </div>
                 ))}
@@ -442,36 +450,36 @@ export default function NewSale() {
 
         {/* Right column — sticky summary */}
         <div className="w-72 shrink-0 sticky top-6 space-y-4">
-          <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-            <h2 className="font-semibold text-slate-900 mb-4">Order Summary</h2>
+          <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-sm">
+            <h2 className="font-semibold text-slate-900 dark:text-slate-100 mb-4">Order Summary</h2>
 
             <div className="space-y-2 text-sm mb-4">
-              <div className="flex justify-between text-slate-500">
+              <div className="flex justify-between text-slate-500 dark:text-slate-400">
                 <span>Subtotal</span><span>{currency(subtotal)}</span>
               </div>
 
               {/* Discount */}
               <div className="space-y-1.5">
-                <p className="text-xs font-medium text-slate-400 uppercase tracking-wider">Discount</p>
+                <p className="text-xs font-medium text-slate-400 dark:text-slate-500 uppercase tracking-wider">Discount</p>
                 <div className="flex gap-2">
                   <Input type="number" min={0} placeholder="Flat" value={discountFlat || ''} onChange={(e) => setDiscountFlat(e.target.value)} className="h-7 text-xs" />
                   <Input type="number" min={0} max={100} placeholder="%" value={discountPercent || ''} onChange={(e) => setDiscountPercent(e.target.value)} className="h-7 text-xs" />
                 </div>
-                {discountAmount > 0 && <p className="text-xs text-emerald-600">- {currency(discountAmount)}</p>}
+                {discountAmount > 0 && <p className="text-xs text-emerald-600 dark:text-emerald-400">- {currency(discountAmount)}</p>}
               </div>
 
               {/* Tax */}
               <div className="space-y-1.5">
-                <p className="text-xs font-medium text-slate-400 uppercase tracking-wider">Tax</p>
+                <p className="text-xs font-medium text-slate-400 dark:text-slate-500 uppercase tracking-wider">Tax</p>
                 <div className="flex gap-2">
                   <Input type="number" min={0} placeholder="Flat" value={taxFlat || ''} onChange={(e) => setTaxFlat(e.target.value)} className="h-7 text-xs" />
                   <Input type="number" min={0} max={100} placeholder="%" value={taxPercent || ''} onChange={(e) => setTaxPercent(e.target.value)} className="h-7 text-xs" />
                 </div>
-                {taxAmount > 0 && <p className="text-xs text-slate-500">+ {currency(taxAmount)}</p>}
+                {taxAmount > 0 && <p className="text-xs text-slate-500 dark:text-slate-400">+ {currency(taxAmount)}</p>}
               </div>
 
-              <div className="border-t border-slate-200 pt-3 flex justify-between font-bold text-base text-slate-900">
-                <span>Grand Total</span><span className="text-indigo-600">{currency(grandTotal)}</span>
+              <div className="border-t border-slate-200 dark:border-slate-700 pt-3 flex justify-between font-bold text-base text-slate-900 dark:text-slate-100">
+                <span>Grand Total</span><span className="text-indigo-600 dark:text-indigo-400">{currency(grandTotal)}</span>
               </div>
             </div>
 
@@ -485,7 +493,11 @@ export default function NewSale() {
                       key={m}
                       type="button"
                       onClick={() => setPaymentMethod(m)}
-                      className={`rounded-lg border py-1.5 text-xs font-medium transition-colors ${paymentMethod === m ? 'border-indigo-600 bg-indigo-50 text-indigo-700' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}`}
+                      className={`rounded-lg border py-1.5 text-xs font-medium transition-colors ${
+                        paymentMethod === m
+                          ? 'border-indigo-600 bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300'
+                          : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
+                      }`}
                     >
                       {m}
                     </button>
