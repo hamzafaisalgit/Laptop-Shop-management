@@ -17,6 +17,7 @@ app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
 app.use(morgan('dev'));
+app.use(express.static('../frontend/dist'))
 
 app.use('/api/auth', authRoutes);
 app.use('/api/laptops', laptopRoutes);
