@@ -7,6 +7,8 @@ require('dotenv').config();
 
 const authRoutes = require('./routes/auth');
 const laptopRoutes = require('./routes/laptops');
+const customerRoutes = require('./routes/customers');
+const saleRoutes = require('./routes/sales');
 
 const app = express();
 
@@ -17,6 +19,8 @@ app.use(morgan('dev'));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/laptops', laptopRoutes);
+app.use('/api/customers', customerRoutes);
+app.use('/api/sales', saleRoutes);
 
 app.get('/api/health', (_req, res) => res.json({ status: 'ok' }));
 
