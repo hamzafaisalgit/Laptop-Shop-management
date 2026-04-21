@@ -12,11 +12,11 @@ router.use(requireAuth);
 // Static routes before :id param routes
 router.get('/low-stock', ctrl.lowStock);
 router.get('/import/template', ctrl.downloadTemplate);
-router.post('/import/preview', upload.single('file'), ctrl.importPreview);
-router.post('/import/commit', ctrl.importCommit);
+router.post('/import/preview', requireAdmin, upload.single('file'), ctrl.importPreview);
+router.post('/import/commit', requireAdmin, ctrl.importCommit);
 
 router.get('/', ctrl.list);
-router.post('/', ctrl.create);
+router.post('/', requireAdmin, ctrl.create);
 router.get('/:id', ctrl.getOne);
 router.patch('/:id', ctrl.update);
 router.patch('/:id/quantity', ctrl.updateQuantity);

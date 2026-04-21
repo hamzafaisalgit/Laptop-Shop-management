@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import {
   Plus, Upload, Search, AlertTriangle, Pencil, Trash2,
-  ChevronLeft, ChevronRight, Minus, Package,
+  ChevronLeft, ChevronRight, Minus, Package, RefreshCw,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -82,16 +82,21 @@ export default function Inventory() {
           <h1 className="text-2xl font-semibold text-slate-900">Inventory</h1>
           <p className="text-sm text-slate-500 mt-0.5">{total} laptop{total !== 1 ? 's' : ''} in stock</p>
         </div>
-        {user?.role === 'admin' && (
-          <div className="flex gap-2">
-            <Button variant="secondary" onClick={() => setImportOpen(true)}>
-              <Upload className="h-4 w-4" /> Bulk Import
-            </Button>
-            <Button onClick={() => setAddOpen(true)}>
-              <Plus className="h-4 w-4" /> Add Laptop
-            </Button>
-          </div>
-        )}
+        <div className="flex gap-2">
+          <Button variant="secondary" onClick={refetch} title="Refresh">
+            <RefreshCw className="h-4 w-4" />
+          </Button>
+          {user?.role === 'admin' && (
+            <>
+              <Button variant="secondary" onClick={() => setImportOpen(true)}>
+                <Upload className="h-4 w-4" /> Bulk Import
+              </Button>
+              <Button onClick={() => setAddOpen(true)}>
+                <Plus className="h-4 w-4" /> Add Laptop
+              </Button>
+            </>
+          )}
+        </div>
       </div>
 
       {/* Filters */}

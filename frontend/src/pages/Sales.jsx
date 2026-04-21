@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { Plus, Search, FileText, Download, XCircle, ShoppingCart } from 'lucide-react';
+import { Plus, Search, FileText, Download, XCircle, ShoppingCart, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
@@ -77,9 +77,14 @@ export default function Sales() {
           <h1 className="text-2xl font-semibold text-slate-900">Sales</h1>
           <p className="text-sm text-slate-500 mt-0.5">{total} invoice{total !== 1 ? 's' : ''}</p>
         </div>
-        <Button onClick={() => navigate('/sales/new')}>
-          <Plus className="h-4 w-4" /> New Sale
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="secondary" onClick={load} title="Refresh">
+            <RefreshCw className="h-4 w-4" />
+          </Button>
+          <Button onClick={() => navigate('/sales/new')}>
+            <Plus className="h-4 w-4" /> New Sale
+          </Button>
+        </div>
       </div>
 
       {/* Filters */}
