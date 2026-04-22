@@ -18,6 +18,7 @@ const schema = z.object({
   model: z.string().min(1, 'Required'),
   modelNumber: z.string().optional(),
   condition: z.enum(['New', 'Used', 'Refurbished', 'Open-box']),
+  serialNumber: z.string().optional(),
   quantity: z.coerce.number().int().min(1).default(1),
   costPrice: z.coerce.number().min(0, 'Required'),
   sellingPrice: z.coerce.number().min(0, 'Required'),
@@ -72,6 +73,7 @@ export default function LaptopFormDialog({ open, onClose, laptop, onSaved }) {
         model: laptop.model || '',
         modelNumber: laptop.modelNumber || '',
         condition: laptop.condition || 'New',
+        serialNumber: laptop.serialNumber || '',
         quantity: laptop.quantity ?? 1,
         costPrice: laptop.costPrice ?? '',
         sellingPrice: laptop.sellingPrice ?? '',
@@ -100,6 +102,7 @@ export default function LaptopFormDialog({ open, onClose, laptop, onSaved }) {
     model: data.model,
     modelNumber: data.modelNumber || undefined,
     condition: data.condition,
+    serialNumber: data.serialNumber || undefined,
     quantity: data.quantity,
     costPrice: data.costPrice,
     sellingPrice: data.sellingPrice,
@@ -160,6 +163,9 @@ export default function LaptopFormDialog({ open, onClose, laptop, onSaved }) {
               </Field>
               <Field label="Model Number" error={errors.modelNumber?.message}>
                 <Input placeholder="9310" {...register('modelNumber')} />
+              </Field>
+              <Field label="Serial Number" error={errors.serialNumber?.message}>
+                <Input placeholder="SN-XPS13-001" {...register('serialNumber')} />
               </Field>
               <Field label="Condition *" error={errors.condition?.message}>
                 <Select {...register('condition')}>

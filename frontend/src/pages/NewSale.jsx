@@ -252,6 +252,7 @@ export default function NewSale() {
         sku: laptop.sku,
         brand: laptop.brand,
         model: laptop.model,
+        serialNumber: laptop.serialNumber,
         condition: laptop.condition,
         specs: laptop.specs,
         maxQty: laptop.quantity,
@@ -374,7 +375,7 @@ export default function NewSale() {
                         <div className="flex-1 min-w-0">
                           <p className="font-medium text-sm text-slate-900 dark:text-slate-100">{item.brand} {item.model}</p>
                           <p className="text-xs text-slate-400 dark:text-slate-500">{compact(item.specs)} · {item.condition}</p>
-                          <p className="font-mono text-xs text-slate-400 dark:text-slate-500">{item.sku}</p>
+                          <p className="font-mono text-xs text-slate-400 dark:text-slate-500">{item.sku}{item.serialNumber ? ` · SN: ${item.serialNumber}` : ''}</p>
                         </div>
                         <div className="flex items-center gap-2 shrink-0">
                           <div className="flex items-center gap-1">

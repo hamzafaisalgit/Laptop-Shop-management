@@ -40,6 +40,7 @@ exports.create = async (req, res) => {
         brand: laptop.brand,
         model: laptop.model,
         modelNumber: laptop.modelNumber,
+        serialNumber: laptop.serialNumber,
         condition: laptop.condition,
         specs: laptop.specs,
         qty: soldQty,

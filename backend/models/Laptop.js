@@ -9,6 +9,7 @@ const laptopSchema = new mongoose.Schema(
       uppercase: true,
       trim: true,
     },
+    serialNumber: { type: String, trim: true },
     brand: { type: String, required: true, trim: true },
     model: { type: String, required: true, trim: true },
     modelNumber: { type: String, trim: true },

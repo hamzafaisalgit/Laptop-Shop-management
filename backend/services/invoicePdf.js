@@ -87,7 +87,8 @@ async function generateInvoicePdf(sale) {
       doc.fillColor('#0f172a').fontSize(8);
       doc.text(String(i + 1), cols.num, rowY);
       doc.text(desc, cols.desc, rowY, { width: 210 });
-      doc.text(item.sku || '—', cols.sku, rowY, { width: 80 });
+      const skuLine = item.serialNumber ? `${item.sku}\nSN: ${item.serialNumber}` : (item.sku || '—');
+      doc.text(skuLine, cols.sku, rowY, { width: 80 });
       doc.text(String(item.qty), cols.qty, rowY);
       doc.text(formatPKR(item.unitPrice), cols.price, rowY, { width: 60 });
       doc.text(formatPKR(item.lineTotal), cols.total, rowY, { width: 60 });

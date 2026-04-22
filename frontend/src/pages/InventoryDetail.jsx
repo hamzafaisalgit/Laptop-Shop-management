@@ -103,6 +103,7 @@ export default function InventoryDetail() {
               <div>
                 <Row label="Condition" value={<span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${conditionColor[laptop.condition]}`}>{laptop.condition}</span>} />
                 <Row label="Model Number" value={laptop.modelNumber} />
+                {laptop.serialNumber && <Row label="Serial Number" value={laptop.serialNumber} />}
                 <Row label="Supplier" value={laptop.supplier} />
                 <Row label="Purchase Date" value={date(laptop.purchaseDate)} />
                 <Row label="Warranty" value={laptop.warrantyMonths ? `${laptop.warrantyMonths} months` : null} />

@@ -20,6 +20,7 @@ function normalizeRow(raw) {
     model: get(['Model', 'model']),
     modelNumber: get(['ModelNumber', 'Model Number', 'modelNumber']),
     condition: get(['Condition', 'condition']),
+    serialNumber: get(['SerialNumber', 'Serial Number', 'serialNumber', 'Serial']),
     processor: get(['Processor', 'processor', 'CPU', 'cpu']),
     generation: get(['Generation', 'generation', 'Gen']),
     ram: get(['RAM', 'Ram', 'ram', 'Memory']),
@@ -85,6 +86,7 @@ async function parseLaptopExcel(buffer) {
       model: row.model,
       modelNumber: row.modelNumber || undefined,
       condition: row.condition,
+      serialNumber: row.serialNumber || undefined,
       specs: {
         processor: row.processor || undefined,
         generation: row.generation || undefined,
@@ -145,6 +147,7 @@ async function commitImport(rows, userId) {
           model: item.row.model,
           modelNumber: item.row.modelNumber,
           condition: item.row.condition,
+          serialNumber: item.row.serialNumber,
           specs: item.row.specs,
           costPrice: Number(item.row.costPrice),
           sellingPrice: Number(item.row.sellingPrice),
