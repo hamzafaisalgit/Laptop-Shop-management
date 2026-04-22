@@ -5,6 +5,8 @@ const { findMergeCandidate } = require('./mergeDetector');
 const logAction = require('../utils/auditLog');
 
 const CONDITIONS = ['New', 'Used', 'Refurbished', 'Open-box'];
+const TRACKING_MODES = ['unit', 'batch'];
+const TRACKING_MODE_ALIASES = { serial: 'unit', 'single unit': 'unit', single: 'unit', batch: 'batch', new: 'batch' };
 
 function normalizeRow(raw) {
   const get = (keys) => {
@@ -58,8 +60,10 @@ function validateRow(row, lineNum) {
   if (!row.costPrice || isNaN(costPrice)) errors.push('CostPrice must be a valid number');
   if (!row.sellingPrice || isNaN(sellingPrice)) errors.push('SellingPrice must be a valid number');
 
-  const trackingMode = row.trackingMode ||
-    (row.condition === 'New' ? 'batch' : 'unit');
+  const rawMode = (row.trackingMode || '').trim().toLowerCase();
+  const trackingMode = TRACKING_MODES.includes(rawMode)
+    ? rawMode
+    : (TRACKING_MODE_ALIASES[rawMode] || (row.condition === 'New' ? 'batch' : 'unit'));
 
   if (trackingMode === 'unit' && !row.serialNumber) {
     errors.push('SerialNumber required for unit tracking');

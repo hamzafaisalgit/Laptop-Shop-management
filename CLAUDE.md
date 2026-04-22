@@ -196,3 +196,7 @@ After any change, run through this smoke test:
 - **Snapshot pattern on sales** so editing customer/laptop records never changes historical invoices
 - **Soft delete / archive** for users and inventory instead of hard delete, to preserve sales history referential integrity
 - **Single MongoDB, no Redis** — scale is small (single shop), simpler is better
+
+
+### Note:
+- **Codex will review your code so give your best**
