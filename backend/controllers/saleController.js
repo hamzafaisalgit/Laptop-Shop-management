@@ -28,14 +28,9 @@ exports.create = async (req, res) => {
     for (const item of items) {
       const laptop = await Laptop.findById(item.laptopId);
       if (!laptop || laptop.archived) return res.status(400).json({ message: `Laptop ${item.laptopId} not found` });
-      if (laptop.status === 'sold') return res.status(400).json({ message: `${laptop.brand} ${laptop.model} is already sold` });
-
       const soldQty = item.qty || 1;
-      if (laptop.trackingMode === 'batch' && laptop.quantity < soldQty) {
+      if (laptop.quantity < soldQty) {
         return res.status(400).json({ message: `Not enough stock for ${laptop.brand} ${laptop.model} (have ${laptop.quantity})` });
-      }
-      if (laptop.trackingMode === 'unit' && soldQty !== 1) {
-        return res.status(400).json({ message: `Unit items can only be sold as qty 1` });
       }
 
       const unitPrice = item.unitPrice ?? laptop.sellingPrice;
@@ -45,10 +40,8 @@ exports.create = async (req, res) => {
         brand: laptop.brand,
         model: laptop.model,
         modelNumber: laptop.modelNumber,
-        serialNumber: laptop.serialNumber,
         condition: laptop.condition,
         specs: laptop.specs,
-        trackingMode: laptop.trackingMode,
         qty: soldQty,
         unitPrice,
         costPrice: laptop.costPrice,
@@ -125,15 +118,7 @@ exports.create = async (req, res) => {
 
     // Update inventory
     for (const item of saleItems) {
-      if (item.trackingMode === 'batch') {
-        await Laptop.findByIdAndUpdate(item.laptopId, { $inc: { quantity: -item.qty } });
-      } else {
-        await Laptop.findByIdAndUpdate(item.laptopId, {
-          status: 'sold',
-          soldAt: new Date(),
-          soldInvoiceId: sale._id,
-        });
-      }
+      await Laptop.findByIdAndUpdate(item.laptopId, { $inc: { quantity: -item.qty } });
     }
 
     // Update customer stats
@@ -233,14 +218,7 @@ exports.cancel = async (req, res) => {
 
     // Restore inventory
     for (const item of sale.items) {
-      if (item.trackingMode === 'batch') {
-        await Laptop.findByIdAndUpdate(item.laptopId, { $inc: { quantity: item.qty } });
-      } else {
-        await Laptop.findByIdAndUpdate(item.laptopId, {
-          status: 'in_stock',
-          $unset: { soldAt: '', soldInvoiceId: '' },
-        });
-      }
+      await Laptop.findByIdAndUpdate(item.laptopId, { $inc: { quantity: item.qty } });
     }
 
     // Reverse customer stats

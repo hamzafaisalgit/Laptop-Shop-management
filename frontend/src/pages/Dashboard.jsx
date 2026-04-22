@@ -118,7 +118,7 @@ function AdminDashboard() {
       {!loading && data && (
         <div className="mb-6 grid grid-cols-4 gap-3">
           {[
-            { label: 'Total Laptops', val: (data.inventory.totalUnits + data.inventory.totalBatches).toLocaleString() },
+            { label: 'Total Laptops', val: (data.inventory.totalRecords ?? 0).toLocaleString() },
             { label: 'Stock Value (Cost)', val: currency(data.inventory.stockValueCost) },
             { label: 'Stock Value (Retail)', val: currency(data.inventory.stockValueRetail) },
             { label: 'Units Sold This Year', val: data.thisYear.unitsSold?.toLocaleString() ?? '0' },

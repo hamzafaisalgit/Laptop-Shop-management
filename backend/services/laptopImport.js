@@ -5,8 +5,6 @@ const { findMergeCandidate } = require('./mergeDetector');
 const logAction = require('../utils/auditLog');
 
 const CONDITIONS = ['New', 'Used', 'Refurbished', 'Open-box'];
-const TRACKING_MODES = ['unit', 'batch'];
-const TRACKING_MODE_ALIASES = { serial: 'unit', 'single unit': 'unit', single: 'unit', batch: 'batch', new: 'batch' };
 
 function normalizeRow(raw) {
   const get = (keys) => {
@@ -22,8 +20,6 @@ function normalizeRow(raw) {
     model: get(['Model', 'model']),
     modelNumber: get(['ModelNumber', 'Model Number', 'modelNumber']),
     condition: get(['Condition', 'condition']),
-    trackingMode: get(['TrackingMode', 'Tracking Mode', 'trackingMode']),
-    serialNumber: get(['SerialNumber', 'Serial Number', 'serialNumber']),
     processor: get(['Processor', 'processor', 'CPU', 'cpu']),
     generation: get(['Generation', 'generation', 'Gen']),
     ram: get(['RAM', 'Ram', 'ram', 'Memory']),
@@ -60,19 +56,10 @@ function validateRow(row, lineNum) {
   if (!row.costPrice || isNaN(costPrice)) errors.push('CostPrice must be a valid number');
   if (!row.sellingPrice || isNaN(sellingPrice)) errors.push('SellingPrice must be a valid number');
 
-  const rawMode = (row.trackingMode || '').trim().toLowerCase();
-  const trackingMode = TRACKING_MODES.includes(rawMode)
-    ? rawMode
-    : (TRACKING_MODE_ALIASES[rawMode] || (row.condition === 'New' ? 'batch' : 'unit'));
-
-  if (trackingMode === 'unit' && !row.serialNumber) {
-    errors.push('SerialNumber required for unit tracking');
-  }
-
   const quantity = parseInt(row.quantity, 10);
   if (row.quantity && isNaN(quantity)) errors.push('Quantity must be an integer');
 
-  return { errors, trackingMode };
+  return { errors };
 }
 
 async function parseLaptopExcel(buffer) {
@@ -84,9 +71,9 @@ async function parseLaptopExcel(buffer) {
   const errors = [];
 
   for (let i = 0; i < rawRows.length; i++) {
-    const lineNum = i + 2; // 1 for header, 1-based
+    const lineNum = i + 2;
     const row = normalizeRow(rawRows[i]);
-    const { errors: rowErrors, trackingMode } = validateRow(row, lineNum);
+    const { errors: rowErrors } = validateRow(row, lineNum);
 
     if (rowErrors.length) {
       errors.push({ line: lineNum, sku: row.brand ? `${row.brand} ${row.model}` : '—', errors: rowErrors, raw: rawRows[i] });
@@ -98,8 +85,6 @@ async function parseLaptopExcel(buffer) {
       model: row.model,
       modelNumber: row.modelNumber || undefined,
       condition: row.condition,
-      trackingMode,
-      serialNumber: row.serialNumber || undefined,
       specs: {
         processor: row.processor || undefined,
         generation: row.generation || undefined,
@@ -125,7 +110,13 @@ async function parseLaptopExcel(buffer) {
     };
 
     const mergeTarget = await findMergeCandidate(incoming);
-    valid.push({ row: incoming, mergeTargetId: mergeTarget?._id?.toString() || null, mergeTargetSku: mergeTarget?.sku || null, mergeTargetQty: mergeTarget?.quantity ?? null, line: lineNum });
+    valid.push({
+      row: incoming,
+      mergeTargetId: mergeTarget?._id?.toString() || null,
+      mergeTargetSku: mergeTarget?.sku || null,
+      mergeTargetQty: mergeTarget?.quantity ?? null,
+      line: lineNum,
+    });
   }
 
   return { valid, errors, total: rawRows.length };
@@ -154,8 +145,6 @@ async function commitImport(rows, userId) {
           model: item.row.model,
           modelNumber: item.row.modelNumber,
           condition: item.row.condition,
-          trackingMode: item.row.trackingMode,
-          serialNumber: item.row.serialNumber,
           specs: item.row.specs,
           costPrice: Number(item.row.costPrice),
           sellingPrice: Number(item.row.sellingPrice),

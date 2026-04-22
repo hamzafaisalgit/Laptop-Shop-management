@@ -23,8 +23,7 @@ exports.list = async (req, res) => {
     if (search) {
       const re = new RegExp(search, 'i');
       filter.$or = [
-        { sku: re }, { brand: re }, { model: re },
-        { serialNumber: re }, { 'specs.processor': re },
+        { sku: re }, { brand: re }, { model: re }, { 'specs.processor': re },
       ];
     }
     if (condition) filter.condition = condition;
@@ -61,11 +60,6 @@ exports.create = async (req, res) => {
   try {
     const body = req.body;
     const { forceMerge, forceNew } = req.query;
-
-    // Determine trackingMode default
-    if (!body.trackingMode) {
-      body.trackingMode = body.condition === 'New' ? 'batch' : 'unit';
-    }
 
     // Check for merge candidate (only if not forced)
     if (!forceNew) {
@@ -168,7 +162,6 @@ exports.remove = async (req, res) => {
 exports.lowStock = async (req, res) => {
   try {
     const laptops = await Laptop.find({
-      trackingMode: 'batch',
       archived: { $ne: true },
       $expr: { $lte: ['$quantity', '$lowStockThreshold'] },
     }).lean();
@@ -204,13 +197,13 @@ exports.importCommit = async (req, res) => {
 // GET /api/laptops/import/template  — returns xlsx template
 exports.downloadTemplate = (_req, res) => {
   const headers = [
-    'Brand', 'Model', 'ModelNumber', 'Condition', 'TrackingMode', 'SerialNumber',
+    'Brand', 'Model', 'ModelNumber', 'Condition',
     'Processor', 'Generation', 'RAM', 'Storage', 'GPU', 'Display', 'Battery',
     'OS', 'Keyboard', 'Ports', 'Weight', 'Color', 'Touchscreen',
     'CostPrice', 'SellingPrice', 'MinSalePrice', 'Supplier', 'Quantity', 'WarrantyMonths', 'Notes',
   ];
   const example = [
-    'Dell', 'XPS 13', '9310', 'New', 'batch', '',
+    'Dell', 'XPS 13', '9310', 'New',
     'Intel Core i7-1165G7', '11th Gen', '16GB', '512GB SSD', 'Intel Iris Xe', '13.4" FHD', '52Wh',
     'Windows 11 Home', 'Backlit', 'USB-C x2, USB-A', '1.27kg', 'Platinum Silver', 'No',
     '85000', '110000', '95000', 'TechSource', '5', '12', '',

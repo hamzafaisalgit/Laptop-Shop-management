@@ -18,8 +18,6 @@ const schema = z.object({
   model: z.string().min(1, 'Required'),
   modelNumber: z.string().optional(),
   condition: z.enum(['New', 'Used', 'Refurbished', 'Open-box']),
-  trackingMode: z.enum(['unit', 'batch']),
-  serialNumber: z.string().optional(),
   quantity: z.coerce.number().int().min(1).default(1),
   costPrice: z.coerce.number().min(0, 'Required'),
   sellingPrice: z.coerce.number().min(0, 'Required'),
@@ -27,7 +25,6 @@ const schema = z.object({
   supplier: z.string().optional(),
   warrantyMonths: z.coerce.number().int().min(0).default(0),
   notes: z.string().optional(),
-  // specs
   processor: z.string().optional(),
   generation: z.string().optional(),
   ram: z.string().optional(),
@@ -59,25 +56,15 @@ export default function LaptopFormDialog({ open, onClose, laptop, onSaved }) {
   const [mergeDialog, setMergeDialog] = useState(null);
   const [pendingData, setPendingData] = useState(null);
 
-  const { register, handleSubmit, watch, setValue, reset, formState: { errors, isSubmitting } } = useForm({
+  const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
       condition: 'New',
-      trackingMode: 'batch',
       quantity: 1,
       warrantyMonths: 0,
     },
   });
 
-  const condition = watch('condition');
-  const trackingMode = watch('trackingMode');
-
-  // Auto-suggest trackingMode when condition changes
-  useEffect(() => {
-    if (!isEdit) setValue('trackingMode', condition === 'New' ? 'batch' : 'unit');
-  }, [condition, isEdit, setValue]);
-
-  // Populate form for edit
   useEffect(() => {
     if (laptop) {
       reset({
@@ -85,8 +72,6 @@ export default function LaptopFormDialog({ open, onClose, laptop, onSaved }) {
         model: laptop.model || '',
         modelNumber: laptop.modelNumber || '',
         condition: laptop.condition || 'New',
-        trackingMode: laptop.trackingMode || 'batch',
-        serialNumber: laptop.serialNumber || '',
         quantity: laptop.quantity ?? 1,
         costPrice: laptop.costPrice ?? '',
         sellingPrice: laptop.sellingPrice ?? '',
@@ -115,9 +100,7 @@ export default function LaptopFormDialog({ open, onClose, laptop, onSaved }) {
     model: data.model,
     modelNumber: data.modelNumber || undefined,
     condition: data.condition,
-    trackingMode: data.trackingMode,
-    serialNumber: data.trackingMode === 'unit' ? data.serialNumber : undefined,
-    quantity: data.trackingMode === 'batch' ? data.quantity : 1,
+    quantity: data.quantity,
     costPrice: data.costPrice,
     sellingPrice: data.sellingPrice,
     minSalePrice: data.minSalePrice || undefined,
@@ -168,25 +151,6 @@ export default function LaptopFormDialog({ open, onClose, laptop, onSaved }) {
       <Dialog open={open} onClose={onClose}>
         <DialogContent title={isEdit ? 'Edit Laptop' : 'Add Laptop'} onClose={onClose} className="max-w-2xl">
           <form onSubmit={handleSubmit((d) => submit(d, null))} className="space-y-5">
-            {/* Tracking mode */}
-            <div className="flex gap-3">
-              {['batch', 'unit'].map((mode) => (
-                <button
-                  key={mode}
-                  type="button"
-                  onClick={() => setValue('trackingMode', mode)}
-                  className={`flex-1 rounded-lg border px-4 py-2.5 text-sm font-medium transition-colors ${
-                    trackingMode === mode
-                      ? 'border-indigo-600 bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300'
-                      : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700'
-                  }`}
-                >
-                  {mode === 'batch' ? '📦 New Stock (Batch)' : '🖥️ Single Unit'}
-                </button>
-              ))}
-            </div>
-
-            {/* Core fields */}
             <div className="grid grid-cols-2 gap-4">
               <Field label="Brand *" error={errors.brand?.message}>
                 <Input placeholder="Dell" {...register('brand')} />
@@ -206,23 +170,15 @@ export default function LaptopFormDialog({ open, onClose, laptop, onSaved }) {
               </Field>
             </div>
 
-            {/* Qty / Serial */}
             <div className="grid grid-cols-2 gap-4">
-              {trackingMode === 'batch' ? (
-                <Field label="Quantity *" error={errors.quantity?.message}>
-                  <Input type="number" min={1} {...register('quantity')} />
-                </Field>
-              ) : (
-                <Field label="Serial Number" error={errors.serialNumber?.message}>
-                  <Input placeholder="SN123456" {...register('serialNumber')} />
-                </Field>
-              )}
+              <Field label="Quantity *" error={errors.quantity?.message}>
+                <Input type="number" min={1} {...register('quantity')} />
+              </Field>
               <Field label="Warranty (months)" error={errors.warrantyMonths?.message}>
                 <Input type="number" min={0} {...register('warrantyMonths')} />
               </Field>
             </div>
 
-            {/* Prices — admin only for cost/min */}
             <div className="grid grid-cols-3 gap-4">
               {user?.role === 'admin' && (
                 <Field label="Cost Price *" error={errors.costPrice?.message}>
@@ -243,7 +199,6 @@ export default function LaptopFormDialog({ open, onClose, laptop, onSaved }) {
               <Input placeholder="Supplier name" {...register('supplier')} />
             </Field>
 
-            {/* Specs toggle */}
             <div>
               <button
                 type="button"
@@ -293,12 +248,11 @@ export default function LaptopFormDialog({ open, onClose, laptop, onSaved }) {
         </DialogContent>
       </Dialog>
 
-      {/* Merge confirmation */}
       {mergeDialog && (
         <Dialog open onClose={() => setMergeDialog(null)}>
           <DialogContent title="Identical batch found" onClose={() => setMergeDialog(null)} className="max-w-sm">
             <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">
-              An existing batch <strong>{mergeDialog.existingSku}</strong> already has{' '}
+              An existing record <strong>{mergeDialog.existingSku}</strong> already has{' '}
               <strong>{mergeDialog.existingQty} units</strong> with the same specs and price.
               What would you like to do?
             </p>
@@ -309,7 +263,7 @@ export default function LaptopFormDialog({ open, onClose, laptop, onSaved }) {
                   await submit(pendingData, 'forceMerge');
                 }}
               >
-                Merge — add to existing batch
+                Merge — add to existing record
               </Button>
               <Button
                 variant="secondary"

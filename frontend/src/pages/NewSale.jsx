@@ -158,8 +158,7 @@ function LaptopPicker({ onSelect, excludeIds = [] }) {
           params: { search: query || undefined, status: 'in_stock', limit: 20 },
         });
         setResults(res.data.data.filter((l) =>
-          !excludeIds.includes(String(l._id)) &&
-          (l.trackingMode === 'batch' ? l.quantity > 0 : l.status === 'in_stock')
+          !excludeIds.includes(String(l._id)) && l.quantity > 0
         ));
       } finally {
         setLoading(false);
@@ -193,7 +192,7 @@ function LaptopPicker({ onSelect, excludeIds = [] }) {
             </div>
             <div className="text-right">
               <p className="font-semibold text-sm text-slate-900 dark:text-slate-100">{currency(l.sellingPrice)}</p>
-              <p className="text-xs text-slate-400 dark:text-slate-500">{l.trackingMode === 'batch' ? `${l.quantity} in stock` : '1 unit'}</p>
+              <p className="text-xs text-slate-400 dark:text-slate-500">{l.quantity} in stock</p>
             </div>
           </button>
         ))}
@@ -255,9 +254,7 @@ export default function NewSale() {
         model: laptop.model,
         condition: laptop.condition,
         specs: laptop.specs,
-        trackingMode: laptop.trackingMode,
-        maxQty: laptop.trackingMode === 'batch' ? laptop.quantity : 1,
-        serialNumber: laptop.serialNumber,
+        maxQty: laptop.quantity,
         sellingPrice: laptop.sellingPrice,
         minSalePrice: laptop.minSalePrice,
         unitPrice: laptop.sellingPrice,
@@ -377,22 +374,20 @@ export default function NewSale() {
                         <div className="flex-1 min-w-0">
                           <p className="font-medium text-sm text-slate-900 dark:text-slate-100">{item.brand} {item.model}</p>
                           <p className="text-xs text-slate-400 dark:text-slate-500">{compact(item.specs)} · {item.condition}</p>
-                          <p className="font-mono text-xs text-slate-400 dark:text-slate-500">{item.sku}{item.serialNumber ? ` · ${item.serialNumber}` : ''}</p>
+                          <p className="font-mono text-xs text-slate-400 dark:text-slate-500">{item.sku}</p>
                         </div>
                         <div className="flex items-center gap-2 shrink-0">
-                          {item.trackingMode === 'batch' && (
-                            <div className="flex items-center gap-1">
-                              <Label className="text-xs text-slate-500 dark:text-slate-400">Qty</Label>
-                              <Input
-                                type="number"
-                                min={1}
-                                max={item.maxQty}
-                                value={item.qty}
-                                onChange={(e) => updateItem(idx, 'qty', Math.max(1, Math.min(item.maxQty, parseInt(e.target.value, 10) || 1)))}
-                                className="w-16 text-center text-sm h-8"
-                              />
-                            </div>
-                          )}
+                          <div className="flex items-center gap-1">
+                            <Label className="text-xs text-slate-500 dark:text-slate-400">Qty</Label>
+                            <Input
+                              type="number"
+                              min={1}
+                              max={item.maxQty}
+                              value={item.qty}
+                              onChange={(e) => updateItem(idx, 'qty', Math.max(1, Math.min(item.maxQty, parseInt(e.target.value, 10) || 1)))}
+                              className="w-16 text-center text-sm h-8"
+                            />
+                          </div>
                           <div className="flex items-center gap-1">
                             <Label className="text-xs text-slate-500 dark:text-slate-400">Price</Label>
                             <Input

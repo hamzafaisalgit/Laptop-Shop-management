@@ -102,8 +102,6 @@ export default function InventoryDetail() {
             <div className="grid grid-cols-2 gap-x-8">
               <div>
                 <Row label="Condition" value={<span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${conditionColor[laptop.condition]}`}>{laptop.condition}</span>} />
-                <Row label="Tracking" value={laptop.trackingMode === 'batch' ? 'Batch / New stock' : 'Single unit'} />
-                {laptop.serialNumber && <Row label="Serial Number" value={laptop.serialNumber} />}
                 <Row label="Model Number" value={laptop.modelNumber} />
                 <Row label="Supplier" value={laptop.supplier} />
                 <Row label="Purchase Date" value={date(laptop.purchaseDate)} />
@@ -152,8 +150,7 @@ export default function InventoryDetail() {
         {/* Right column */}
         <div className="space-y-6">
           {/* Quantity card */}
-          {laptop.trackingMode === 'batch' && (
-            <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 shadow-sm">
+          <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 shadow-sm">
               <h2 className="font-semibold text-slate-900 dark:text-slate-100 mb-4">Stock</h2>
               <div className="flex items-center gap-3 mb-4">
                 <button
@@ -185,8 +182,7 @@ export default function InventoryDetail() {
                   <Button variant="secondary" size="sm" onClick={handleSetQty}>Set</Button>
                 </div>
               )}
-            </div>
-          )}
+          </div>
 
           {/* Audit log */}
           <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 shadow-sm">

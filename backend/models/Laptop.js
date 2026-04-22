@@ -9,16 +9,6 @@ const laptopSchema = new mongoose.Schema(
       uppercase: true,
       trim: true,
     },
-    trackingMode: {
-      type: String,
-      enum: ['unit', 'batch'],
-      required: true,
-    },
-    serialNumber: {
-      type: String,
-      trim: true,
-    },
-    serialNumbers: [{ type: String, trim: true }],
     brand: { type: String, required: true, trim: true },
     model: { type: String, required: true, trim: true },
     modelNumber: { type: String, trim: true },
@@ -62,7 +52,6 @@ const laptopSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Text index for search
-laptopSchema.index({ sku: 'text', brand: 'text', model: 'text', serialNumber: 'text' });
+laptopSchema.index({ sku: 'text', brand: 'text', model: 'text' });
 
 module.exports = mongoose.model('Laptop', laptopSchema);

@@ -59,8 +59,7 @@ exports.getDashboard = async (req, res, next) => {
           {
             $group: {
               _id: null,
-              totalUnits: { $sum: { $cond: [{ $eq: ['$trackingMode', 'unit'] }, 1, 0] } },
-              totalBatches: { $sum: { $cond: [{ $eq: ['$trackingMode', 'batch'] }, 1, 0] } },
+              totalRecords: { $sum: 1 },
               stockValueCost: { $sum: { $multiply: ['$quantity', '$costPrice'] } },
               stockValueRetail: { $sum: { $multiply: ['$quantity', '$sellingPrice'] } },
               lowStockCount: {
@@ -68,7 +67,6 @@ exports.getDashboard = async (req, res, next) => {
                   $cond: [
                     {
                       $and: [
-                        { $eq: ['$trackingMode', 'batch'] },
                         { $lte: ['$quantity', '$lowStockThreshold'] },
                         { $gt: ['$quantity', 0] },
                       ],
@@ -118,7 +116,6 @@ exports.getDashboard = async (req, res, next) => {
 
         Laptop.find({
           archived: false,
-          trackingMode: 'batch',
           $expr: { $lte: ['$quantity', '$lowStockThreshold'] },
           quantity: { $gt: 0 },
         })
@@ -130,7 +127,7 @@ exports.getDashboard = async (req, res, next) => {
     const month = monthData[0] || { revenue: 0, salesCount: 0, profit: 0, unitsSold: 0 };
     const prevMonth = prevMonthData[0] || { revenue: 0, salesCount: 0, profit: 0, unitsSold: 0 };
     const year = yearData[0] || { revenue: 0, salesCount: 0, profit: 0, unitsSold: 0 };
-    const inv = invData[0] || { totalUnits: 0, totalBatches: 0, stockValueCost: 0, stockValueRetail: 0, lowStockCount: 0 };
+    const inv = invData[0] || { totalRecords: 0, stockValueCost: 0, stockValueRetail: 0, lowStockCount: 0 };
 
     res.json({
       today,

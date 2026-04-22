@@ -150,7 +150,7 @@ async function seed() {
       const sku = `DEMO-${brand.brand.substring(0, 3).toUpperCase()}-N-${String(skuSeq).padStart(3, '0')}`;
       const laptop = await Laptop.create({
         sku,
-        trackingMode: 'batch',
+        
         brand: brand.brand,
         model: m.model,
         modelNumber: m.modelNumber,
@@ -181,8 +181,6 @@ async function seed() {
     const sku = `DEMO-${brandData.brand.substring(0, 3).toUpperCase()}-U-${String(skuSeq).padStart(3, '0')}`;
     await Laptop.create({
       sku,
-      trackingMode: 'unit',
-      serialNumber: `SN-DEMO-${skuSeq}`,
       brand: brandData.brand,
       model: modelData.model,
       modelNumber: modelData.modelNumber,
@@ -234,7 +232,7 @@ async function seed() {
           model: laptop.model,
           condition: laptop.condition,
           specs: laptop.specs,
-          trackingMode: 'batch',
+          
           qty,
           unitPrice,
           costPrice,
@@ -286,7 +284,7 @@ async function seed() {
         model: laptop.model,
         condition: laptop.condition,
         specs: laptop.specs,
-        trackingMode: 'batch',
+        
         qty: 1,
         unitPrice,
         costPrice,

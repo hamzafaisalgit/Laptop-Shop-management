@@ -70,7 +70,7 @@ export default function Inventory() {
   };
 
   const totalPages = Math.max(1, Math.ceil(total / 25));
-  const isLowStock = (l) => l.trackingMode === 'batch' && l.quantity <= l.lowStockThreshold;
+  const isLowStock = (l) => l.quantity <= l.lowStockThreshold;
 
   return (
     <div>
@@ -159,34 +159,30 @@ export default function Inventory() {
                 </td>
                 <td className="px-4 py-3 text-xs text-slate-500 dark:text-slate-400 max-w-40 truncate">{compact(laptop.specs)}</td>
                 <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
-                  {laptop.trackingMode === 'batch' ? (
-                    <div className="flex items-center gap-1.5">
-                      {user?.role === 'admin' && (
-                        <button
-                          disabled={qtyLoading[laptop._id] || laptop.quantity === 0}
-                          onClick={() => handleQty(laptop, -1)}
-                          className="flex h-6 w-6 items-center justify-center rounded border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-30"
-                        >
-                          <Minus className="h-3 w-3" />
-                        </button>
-                      )}
-                      <span className={`min-w-6 text-center font-semibold ${laptop.quantity === 0 ? 'text-red-500' : isLowStock(laptop) ? 'text-amber-600' : 'text-slate-900 dark:text-slate-100'}`}>
-                        {laptop.quantity}
-                        {isLowStock(laptop) && laptop.quantity > 0 && (
-                          <AlertTriangle className="inline ml-1 h-3 w-3 text-amber-500" />
-                        )}
-                      </span>
+                  <div className="flex items-center gap-1.5">
+                    {user?.role === 'admin' && (
                       <button
-                        disabled={qtyLoading[laptop._id]}
-                        onClick={() => handleQty(laptop, 1)}
+                        disabled={qtyLoading[laptop._id] || laptop.quantity === 0}
+                        onClick={() => handleQty(laptop, -1)}
                         className="flex h-6 w-6 items-center justify-center rounded border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-30"
                       >
-                        <Plus className="h-3 w-3" />
+                        <Minus className="h-3 w-3" />
                       </button>
-                    </div>
-                  ) : (
-                    <span className="text-slate-700 dark:text-slate-300">1 unit</span>
-                  )}
+                    )}
+                    <span className={`min-w-6 text-center font-semibold ${laptop.quantity === 0 ? 'text-red-500' : isLowStock(laptop) ? 'text-amber-600 dark:text-amber-400' : 'text-slate-900 dark:text-slate-100'}`}>
+                      {laptop.quantity}
+                      {isLowStock(laptop) && laptop.quantity > 0 && (
+                        <AlertTriangle className="inline ml-1 h-3 w-3 text-amber-500" />
+                      )}
+                    </span>
+                    <button
+                      disabled={qtyLoading[laptop._id]}
+                      onClick={() => handleQty(laptop, 1)}
+                      className="flex h-6 w-6 items-center justify-center rounded border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-30"
+                    >
+                      <Plus className="h-3 w-3" />
+                    </button>
+                  </div>
                 </td>
                 <td className="px-4 py-3 text-xs">
                   {user?.role === 'admin' ? (
